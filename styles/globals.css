@@ -25,9 +25,9 @@
     --foreground: 209, 29%, 70%;
 
     /* Default */
-    /* --background: 0 0% 100%;  */
+    /* --card: 0 0% 100%;  */
     /* --card-foreground: 222.2 84% 4.9%; */
-    --background: 209, 61%, 14%;
+    --card: 209, 61%, 14%;
     --card-foreground: 209, 29%, 70%;
 
     --popover: 0 0% 100%;

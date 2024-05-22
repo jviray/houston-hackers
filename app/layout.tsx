@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={sourceSans3.className}>
-        <main className="h-full p-4">{children}</main>
+        <main className="h-full p-6">{children}</main>
       </body>
     </html>
   );
