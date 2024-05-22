@@ -1,3 +1,7 @@
 export default function Home() {
-  return <h1 className="m-1 p-1 font-bold">Hello World</h1>;
+  return (
+    <p className="text-3xl text-[#9cb3c9]">
+      Whereas disregard and contempt for human rights have resulted
+    </p>
+  );
 }

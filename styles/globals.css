@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+html,
+body,
+:root {
+  height: 100%;
+  background-color: #0e2439;
+}
+
+/* 
+ * Colors:
+ * - Headers: #fff / rgb(256, 256, 256)
+ * - Post paragraph: #9cb3c9 / rgb(156, 179, 201)
+ * - Post titles non-highlighted? #b6cce2 / rgb(182, 204, 226)
+ * - Metadata: #63809C / rgb(99, 128, 156)
+ */
+
 @layer base {
   :root {
     --background: 0 0% 100%;

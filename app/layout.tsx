@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
+import { Source_Sans_3 } from 'next/font/google';
 
-const inter = Inter({ subsets: ['latin'] });
+import '@/styles/globals.css';
+
+const sourceSans3 = Source_Sans_3({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Indie Hackers Clone',
@@ -16,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={sourceSans3.className}>{children}</body>
     </html>
   );
 }
