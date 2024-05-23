@@ -1,4 +1,8 @@
+import { cn } from '@/lib/utils';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
+const TABS = ['Comments', 'Posts'];
 
 export default function UserPage() {
   return (
@@ -22,9 +26,21 @@ export default function UserPage() {
         </header>
 
         <nav className="flex justify-between rounded-b-[3px] border-t-[3px] border-background bg-[#182e43]">
-          <ul className="flex">
-            <li>Tab 1</li>
-            <li>Tab 2</li>
+          {/* Tabs */}
+          <ul className="flex gap-2">
+            {TABS.map((tabLabel, idx) => (
+              <li
+                key={tabLabel}
+                className={cn(
+                  'border-b-[3px] border-b-transparent p-4',
+                  idx === 0
+                    ? 'border-b-[#4799eb] text-white'
+                    : 'hover:border-b-[#385c80]',
+                )}
+              >
+                <h2 className="font-semibold">{tabLabel}</h2>
+              </li>
+            ))}
           </ul>
 
           <span>button</span>
