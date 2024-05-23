@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 
 const TABS = ['Comments', 'Posts'];
 
@@ -25,7 +26,7 @@ export default function UserPage() {
           </div>
         </header>
 
-        <nav className="flex justify-between rounded-b-[3px] border-t-[3px] border-background bg-[#182e43]">
+        <nav className="flex items-center justify-between rounded-b-[3px] border-t-[3px] border-background bg-[#182e43] pr-2">
           {/* Tabs */}
           <ul className="flex gap-2">
             {TABS.map((tabLabel, idx) => (
@@ -43,7 +44,12 @@ export default function UserPage() {
             ))}
           </ul>
 
-          <span>button</span>
+          <Button
+            size={'lg'}
+            className="bg-gradient-to-r from-[#e052a0] to-[#f15c41] text-base font-semibold  hover:from-[#3ec7e0] hover:to-[#526bf4]"
+          >
+            Follow
+          </Button>
         </nav>
       </div>
 
