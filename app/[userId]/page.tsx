@@ -1,8 +1,9 @@
+import Link from 'next/link';
+
 import { cn } from '@/lib/utils';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import { Btn } from '@/components/btn';
 
 const TABS = ['Comments', 'Posts'];
 
@@ -46,12 +47,9 @@ export default function UserPage() {
           </ul>
 
           <div className="px-2">
-            <Button
-              size={'lg'}
-              className="bg-gradient-to-r from-[#e052a0] to-[#f15c41] text-base font-semibold  hover:from-[#3ec7e0] hover:to-[#526bf4]"
-            >
+            <Btn size={'lg'} className="text-base font-semibold">
               Follow
-            </Button>
+            </Btn>
           </div>
         </nav>
       </div>
