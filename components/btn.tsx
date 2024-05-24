@@ -8,7 +8,7 @@ const btnVariants = {
   default:
     'bg-gradient-to-r from-[#e052a0] to-[#f15c41] hover:from-[#3ec7e0] hover:to-[#526bf4]',
   outline:
-    'bg-background bg-gradient-to-r shadow-[0_0_0_3px_inset_rgb(38,66,95)] hover:border-transparent hover:from-[#3ec7e0] hover:to-[#526bf4] hover:shadow-none',
+    'bg-background bg-gradient-to-r shadow-[0_0_0_3px_rgb(38,66,95)] hover:from-[#3ec7e0] hover:to-[#526bf4] hover:shadow-none',
 };
 
 interface BtnVariant {
