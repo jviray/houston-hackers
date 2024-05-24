@@ -1,7 +1,7 @@
 // import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AuthButtonGroup } from '@/components/layout/auth-btn-group';
 
-export const AppHeader = () => {
+export const Navbar = () => {
   return (
     <header className="bg-border px-6">
       <div className="mx-auto flex max-w-screen-lg items-center justify-between py-3">

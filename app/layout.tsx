@@ -3,7 +3,7 @@ import { Source_Sans_3 } from 'next/font/google';
 
 import '@/styles/globals.css';
 
-import { AppHeader } from '@/components/layout/app-header';
+import { Navbar } from '@/components/layout/navbar';
 
 const sourceSans3 = Source_Sans_3({ subsets: ['latin'] });
 
@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={sourceSans3.className}>
-        <AppHeader />
+        <Navbar />
 
         <main className="h-full p-8">
           <div className="mx-auto grid max-w-screen-lg place-items-center">
