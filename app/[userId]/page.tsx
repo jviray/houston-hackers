@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Btn } from '@/components/btn';
+import { Button } from '@/components/ui/button';
 
 const TABS = ['Comments', 'Posts'];
 
@@ -48,7 +49,7 @@ export default function UserPage() {
 
           <div className="px-2">
             <Btn size={'lg'} className="text-base font-semibold">
-              Follow
+              LOG IN
             </Btn>
           </div>
         </nav>

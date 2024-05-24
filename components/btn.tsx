@@ -4,16 +4,25 @@ import { cn } from '@/lib/utils';
 
 import { Button, ButtonProps } from '@/components/ui/button';
 
-export const Btn = forwardRef<HTMLButtonElement, ButtonProps>(
+const btnVariants = {
+  default:
+    'bg-gradient-to-r from-[#e052a0] to-[#f15c41] hover:from-[#3ec7e0] hover:to-[#526bf4]',
+  outline:
+    'bg-background bg-gradient-to-r shadow-[0_0_0_3px_inset_rgb(38,66,95)] hover:border-transparent hover:from-[#3ec7e0] hover:to-[#526bf4] hover:shadow-none',
+};
+
+interface BtnVariant {
+  variant?: 'default' | 'outline';
+}
+
+type BtnProps = Omit<ButtonProps, keyof BtnVariant> & BtnVariant;
+
+export const Btn = forwardRef<HTMLButtonElement, BtnProps>(
   ({ variant, size, className, children, ...props }, ref) => {
     return (
       <Button
-        variant={variant}
         size={size}
-        className={cn(
-          'bg-gradient-to-r from-[#e052a0] to-[#f15c41] hover:from-[#3ec7e0] hover:to-[#526bf4]',
-          className,
-        )}
+        className={cn(btnVariants[variant ?? 'default'], className)}
         ref={ref}
         {...props}
       >
