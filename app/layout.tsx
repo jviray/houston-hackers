@@ -9,8 +9,8 @@ import { Button } from '@/components/ui/button';
 const sourceSans3 = Source_Sans_3({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Indie Hackers Clone',
-  description: 'Developed by @jviray',
+  title: 'Houston Hackers',
+  description: 'Forum for tech community in Houston',
 };
 
 export default function RootLayout({
