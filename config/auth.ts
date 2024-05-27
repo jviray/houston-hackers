@@ -1,5 +1,9 @@
 import { type NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
+import { PrismaAdapter } from '@auth/prisma-adapter';
+
+import { db } from '@/server/db';
+import { Adapter } from 'next-auth/adapters';
 
 export const options = {
   providers: [
@@ -8,4 +12,6 @@ export const options = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
+  session: { strategy: 'jwt' },
+  adapter: PrismaAdapter(db) as Adapter,
 } satisfies NextAuthOptions;
