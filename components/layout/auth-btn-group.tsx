@@ -1,3 +1,6 @@
+'use client';
+
+import { signIn } from 'next-auth/react';
 import { FaGoogle } from 'react-icons/fa';
 
 import { Btn } from '@/components/btn';
@@ -30,6 +33,7 @@ export const AuthButtonGroup = () => {
           <Btn
             size="lg"
             className="flex items-center justify-center gap-4 text-base font-semibold"
+            onClick={() => signIn('google')}
           >
             <FaGoogle className="h-5 w-5" />
             Continue with Google
