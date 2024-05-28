@@ -5,6 +5,7 @@ import { Adapter } from 'next-auth/adapters';
 
 import { db } from '@/server/db';
 import { createUser } from '@/server/mutations/users';
+import { getUserById } from '@/server/queries/users';
 
 export const options = {
   providers: [
@@ -14,6 +15,28 @@ export const options = {
     }),
   ],
   session: { strategy: 'jwt' },
+  callbacks: {
+    async jwt({ token }) {
+      if (!token.sub) return token;
+
+      const user = await getUserById(token.sub);
+      if (!user) return token;
+
+      token.username = user.username;
+
+      return token;
+    },
+    // Persist relevant user data on the client via session
+    async session({ token, session }) {
+      // Add id and username to session
+      if (token.sub && session.user) {
+        session.user.id = token.sub;
+        session.user.username = token.username;
+      }
+
+      return session;
+    },
+  },
   adapter: {
     ...PrismaAdapter(db),
     createUser,
