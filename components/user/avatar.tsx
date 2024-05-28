@@ -5,6 +5,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from '@/components/ui/avatar';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type AvatarProps = {
   className?: string;
@@ -14,10 +15,14 @@ type AvatarProps = {
 
 export const Avatar = (props: AvatarProps) => {
   const { className, image, email } = props;
+
   return (
     <ShadcnAvatar className={className}>
       <AvatarImage src={image} />
-      <AvatarFallback>
+
+      <Skeleton className="h-full w-full rounded-full" />
+
+      <AvatarFallback delayMs={1000}>
         <BoringAvatar
           name={email}
           variant="beam"
