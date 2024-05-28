@@ -2,7 +2,15 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { nanoid } from 'nanoid';
 import crypto from 'crypto';
+import {
+  GetServerSidePropsContext,
+  NextApiRequest,
+  NextApiResponse,
+} from 'next';
+import { getServerSession } from 'next-auth';
+
 import { getUserByUsername } from '@/server/queries/users';
+import { options as authOptions } from '@/config/auth';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -23,3 +31,13 @@ export const generateUsernameFromEmail = async (email: string) => {
 
   return username;
 };
+
+// Helper function for use in server contexts
+export function auth(
+  ...args:
+    | [GetServerSidePropsContext['req'], GetServerSidePropsContext['res']]
+    | [NextApiRequest, NextApiResponse]
+    | []
+) {
+  return getServerSession(...args, authOptions);
+}
