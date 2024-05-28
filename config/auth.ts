@@ -4,6 +4,7 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import { Adapter } from 'next-auth/adapters';
 
 import { db } from '@/server/db';
+import { createUser } from '@/server/mutations/users';
 
 export const options = {
   providers: [
@@ -13,5 +14,8 @@ export const options = {
     }),
   ],
   session: { strategy: 'jwt' },
-  adapter: PrismaAdapter(db) as Adapter,
+  adapter: {
+    ...PrismaAdapter(db),
+    createUser,
+  } as Adapter,
 } satisfies NextAuthOptions;
