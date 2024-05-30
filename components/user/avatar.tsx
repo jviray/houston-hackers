@@ -10,7 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 type AvatarProps = {
   className?: string;
   image?: string;
-  email?: string;
+  email: string;
 };
 
 export const Avatar = (props: AvatarProps) => {

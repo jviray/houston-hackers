@@ -1,10 +1,10 @@
-import { auth } from '@/lib/utils';
+import { getCurrentUser } from '@/server/queries/users';
 
 import { AuthButtonGroup } from '@/components/layout/auth-btn-group';
 import { Avatar } from '@/components/user/avatar';
 
 export const Navbar = async () => {
-  const session = await auth();
+  const user = await getCurrentUser();
 
   return (
     <header className="bg-border px-6">
@@ -12,11 +12,11 @@ export const Navbar = async () => {
         <h1 className="font-bold text-white">HOUSTON HACKERS</h1>
 
         <div className="space-x-3">
-          {session?.user ? (
+          {user ? (
             <Avatar
               className="outline-3 outline-white hover:outline"
-              image={session.user.image!}
-              email={session.user.email!}
+              image={user.image}
+              email={user.email}
             />
           ) : (
             <AuthButtonGroup />

@@ -1,4 +1,10 @@
+import { auth } from '@/lib/utils';
 import { db } from '@/server/db';
+
+export const getCurrentUser = async () => {
+  const session = await auth();
+  return session?.user;
+};
 
 type UserUniqueConstraint = 'id' | 'email' | 'username';
 
