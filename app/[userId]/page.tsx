@@ -1,27 +1,37 @@
 import Link from 'next/link';
 
 import { cn } from '@/lib/utils';
-
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Btn } from '@/components/btn';
-import { Button } from '@/components/ui/button';
+import { getUserByUsername } from '@/server/queries/users';
+import { Avatar } from '@/components/user/avatar';
 
 const TABS = ['Comments', 'Posts'];
 
-export default function UserPage() {
+export default async function UserPage({
+  params,
+}: {
+  params: { userId: string };
+}) {
+  const { userId } = params;
+
+  const user = await getUserByUsername(userId);
+
+  if (!user) return;
+
   return (
-    <div className="w-[800px]">
+    <div className="w-9/12">
       {/* Banner */}
       <div>
         <header className="flex items-center gap-8 rounded-t-[3px] bg-border p-11">
-          <Avatar className="h-28 w-28 border-8 border-background">
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
+          <Avatar
+            className="h-28 w-28 border-8 border-background"
+            image={user.image as string | undefined}
+            email={user.email}
+          />
 
           <div>
             <h1 className="text-[36px] font-semibold leading-relaxed text-white">
-              Jonathan Viray
+              {user.name}
             </h1>
             <p className="text-lg leading-snug">
               Lorem ipsum dolor sit amet consectetur adipisicing elit

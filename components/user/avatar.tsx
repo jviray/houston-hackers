@@ -24,6 +24,7 @@ export const Avatar = (props: AvatarProps) => {
 
       <AvatarFallback delayMs={1000}>
         <BoringAvatar
+          size={100}
           name={email}
           variant="beam"
           colors={['#fb7968', '#f9c593', '#fafad4', '#b0d1b2', '#89b2a2']}
