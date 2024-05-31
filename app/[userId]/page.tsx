@@ -25,8 +25,7 @@ export default async function UserPage({
         <header className="flex items-center gap-8 rounded-t-[3px] bg-border p-11">
           <Avatar
             className="h-28 w-28 border-8 border-background"
-            image={user.image as string | undefined}
-            email={user.email}
+            user={user}
           />
 
           <div>

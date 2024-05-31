@@ -5,6 +5,7 @@ import { Avatar } from '@/components/user/avatar';
 
 export const Navbar = async () => {
   const user = await getCurrentUser();
+  const isLoggedIn = !!user;
 
   return (
     <header className="bg-border px-6">
@@ -12,11 +13,11 @@ export const Navbar = async () => {
         <h1 className="font-bold text-white">HOUSTON HACKERS</h1>
 
         <div className="space-x-3">
-          {user ? (
+          {isLoggedIn ? (
             <Avatar
+              asLink
               className="outline-3 outline-white hover:outline"
-              image={user.image}
-              email={user.email}
+              user={user}
             />
           ) : (
             <AuthButtonGroup />
