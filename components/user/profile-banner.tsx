@@ -1,9 +1,11 @@
 import { User } from '@prisma/client';
+import Link from 'next/link';
 
 import { cn } from '@/lib/utils';
 
 import { Btn } from '@/components/btn';
 import { Avatar } from '@/components/user/avatar';
+import { PermissionCheck } from '@/components/access/permission-check';
 
 const TABS = ['Comments', 'Posts'];
 
@@ -46,9 +48,11 @@ export const ProfileBanner = ({ user }: Props) => {
         </ul>
 
         <div className="px-2">
-          <Btn size={'lg'} className="text-base font-semibold">
-            LOG IN
-          </Btn>
+          <PermissionCheck permission={`owner:${user.username}`}>
+            <Btn size={'lg'} className="text-base font-semibold" asChild>
+              <Link href={`${user.username}/posts/new`}>POST</Link>
+            </Btn>
+          </PermissionCheck>
         </div>
       </nav>
     </>
