@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.1.0",
+    "@lexical/react": "^0.15.0",
     "@prisma/client": "^5.14.0",
     "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-dialog": "^1.0.5",
@@ -17,6 +18,7 @@
     "boring-avatars": "^1.10.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "lexical": "^0.15.0",
     "lucide-react": "^0.379.0",
     "nanoid": "^5.0.7",
     "next": "14.2.3",
