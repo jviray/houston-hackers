@@ -50,7 +50,7 @@ export const ProfileBanner = ({ user }: Props) => {
         <div className="px-2">
           <PermissionCheck permission={`owner:${user.username}`}>
             <Btn size={'lg'} className="text-base font-semibold" asChild>
-              <Link href={`${user.username}/posts/new`}>POST</Link>
+              <Link href={`${user.username}/posts/new`}>NEW POST</Link>
             </Btn>
           </PermissionCheck>
         </div>

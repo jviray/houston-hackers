@@ -11,6 +11,7 @@ import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 
 import { AutosizeTextarea } from '@/components/ui/autosize-textarea';
+import { Btn } from '@/components/btn';
 
 const theme = {};
 
@@ -65,6 +66,8 @@ export default function Editor() {
           <OnChangePlugin onChange={onChange} />
         </LexicalComposer>
       </div>
+
+      <Btn className="px-4 py-6">SUBMIT POST</Btn>
     </div>
   );
 }
