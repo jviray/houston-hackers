@@ -1,7 +1,7 @@
 'use client';
 
-import { type EditorState } from 'lexical';
 import { useState } from 'react';
+import { type EditorState } from 'lexical';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
@@ -9,6 +9,8 @@ import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
+
+import { AutosizeTextarea } from '@/components/ui/autosize-textarea';
 
 const theme = {};
 
@@ -36,25 +38,33 @@ export default function Editor() {
   };
 
   return (
-    <div className="w-8/12">
-      <LexicalComposer initialConfig={initialConfig}>
-        <div className="flex min-h-44 w-full flex-col rounded-md border-2 bg-border p-4 text-xl text-[#dde1e4]">
-          <div className="relative flex flex-grow flex-col">
-            <RichTextPlugin
-              contentEditable={
-                <ContentEditable className="relative z-10 h-full w-full flex-grow focus:outline-none" />
-              }
-              placeholder={
-                <p className="absolute top-0 text-[#63809C]">Enter body...</p>
-              }
-              ErrorBoundary={LexicalErrorBoundary}
-            />
+    <div className="w-8/12 space-y-8">
+      <div className="space-y-4">
+        <AutosizeTextarea
+          maxLength={128}
+          placeholder="Enter title"
+          className="h-[74px] w-full resize-none appearance-none rounded-md border-none bg-border p-4 text-4xl font-semibold text-[#dde1e4] placeholder:text-[#63809C]"
+        />
+
+        <LexicalComposer initialConfig={initialConfig}>
+          <div className="flex min-h-44 w-full flex-col rounded-md bg-border p-4 text-xl text-[#dde1e4]">
+            <div className="relative flex flex-grow flex-col">
+              <RichTextPlugin
+                contentEditable={
+                  <ContentEditable className="relative z-10 h-full w-full flex-grow focus:outline-none" />
+                }
+                placeholder={
+                  <p className="absolute top-0 text-[#63809C]">Enter body...</p>
+                }
+                ErrorBoundary={LexicalErrorBoundary}
+              />
+            </div>
           </div>
-        </div>
-        <AutoFocusPlugin />
-        <HistoryPlugin />
-        <OnChangePlugin onChange={onChange} />
-      </LexicalComposer>
+          <AutoFocusPlugin />
+          <HistoryPlugin />
+          <OnChangePlugin onChange={onChange} />
+        </LexicalComposer>
+      </div>
     </div>
   );
 }
