@@ -1,5 +1,9 @@
-import Editor from '@/components/posts/editor';
+import { NewPostForm } from '@/components/posts/new-post-form';
 
 export default function NewPostPage() {
-  return <Editor />;
+  return (
+    <div className="w-8/12">
+      <NewPostForm />
+    </div>
+  );
 }
