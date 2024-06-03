@@ -11,6 +11,7 @@ export const NewPostForm = () => {
   const [title, setTitle] = useState<string | undefined>();
 
   // https://lexical.dev/docs/getting-started/react#saving-lexical-state
+  // https://www.chunxuyang.com/blogs/shadcn-lexical-editor/
   // https://stackoverflow.com/questions/75292778/how-do-i-parse-the-html-from-the-lexical-editorstate-without-an-extra-lexical-ed
 
   const [body, setBody] = useState<string | undefined>();

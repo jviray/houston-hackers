@@ -1,7 +1,10 @@
 'use client';
 
 import { type EditorState } from 'lexical';
-import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import {
+  type InitialConfigType,
+  LexicalComposer,
+} from '@lexical/react/LexicalComposer';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
@@ -11,7 +14,13 @@ import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 
 import { ToolbarPlugin } from '@/components/editor/toolbar-plugin';
 
-const theme = {};
+// The theme object contains the classnames for the formatted nodes
+const theme = {
+  text: {
+    italic: 'italic',
+    underline: 'underline',
+  },
+};
 
 const onError = (error: Error) => {
   console.error(error);
@@ -22,7 +31,7 @@ export default function TextEditor({
 }: {
   onChange: (editorState: EditorState) => void;
 }) {
-  const initialConfig = {
+  const initialConfig: InitialConfigType = {
     namespace: 'TextEditor',
     theme,
     onError,
