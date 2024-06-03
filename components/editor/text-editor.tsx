@@ -9,13 +9,15 @@ import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 
+import { ToolbarPlugin } from '@/components/editor/toolbar-plugin';
+
 const theme = {};
 
 const onError = (error: Error) => {
   console.error(error);
 };
 
-export default function Editor({
+export default function TextEditor({
   onChange,
 }: {
   onChange: (editorState: EditorState) => void;
@@ -27,9 +29,11 @@ export default function Editor({
   };
 
   return (
-    <>
+    <div>
       <LexicalComposer initialConfig={initialConfig}>
-        <div className="flex min-h-44 w-full flex-col rounded-md bg-border p-4 text-xl text-[#dde1e4]">
+        <ToolbarPlugin />
+
+        <div className="flex min-h-44 w-full flex-col rounded-b-[3px] bg-border p-4 text-xl text-[#dde1e4]">
           <div className="relative flex flex-grow flex-col">
             <RichTextPlugin
               contentEditable={
@@ -46,6 +50,6 @@ export default function Editor({
         <HistoryPlugin />
         <OnChangePlugin onChange={onChange} />
       </LexicalComposer>
-    </>
+    </div>
   );
 }

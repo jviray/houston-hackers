@@ -5,7 +5,7 @@ import { type EditorState } from 'lexical';
 
 import { AutosizeTextarea } from '@/components/ui/autosize-textarea';
 import { Btn } from '@/components/btn';
-import Editor from '@/components/posts/editor';
+import TextEditor from '@/components/editor/text-editor';
 
 export const NewPostForm = () => {
   const [title, setTitle] = useState<string | undefined>();
@@ -25,16 +25,16 @@ export const NewPostForm = () => {
 
   return (
     <form className="space-y-8">
-      <div className="space-y-4">
+      <div className="space-y-6">
         <AutosizeTextarea
           maxLength={128}
           placeholder="Enter title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="h-[74px] w-full resize-none appearance-none rounded-md border-none bg-border p-4 text-4xl font-semibold text-[#dde1e4] placeholder:text-[#63809C]"
+          className="h-[74px] w-full resize-none appearance-none rounded-[3px] border-none bg-border p-4 text-4xl font-semibold text-[#dde1e4] placeholder:text-[#63809C]"
         />
 
-        <Editor onChange={onEditorChange} />
+        <TextEditor onChange={onEditorChange} />
       </div>
 
       <Btn type="submit" className="px-4 py-6">
