@@ -26,6 +26,7 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Post      Post[]
 }
 
 model Account {
@@ -47,4 +48,33 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([provider, providerAccountId])
+}
+
+model Group {
+  id   String @id
+  name String @unique
+
+  posts Post[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Post {
+  id      String @id
+  title   String
+  content Json
+
+  group   Group  @relation(fields: [groupId], references: [id])
+  groupId String
+
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
+
+  // Comments
+  // Votes
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
 }
