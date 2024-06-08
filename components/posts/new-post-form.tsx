@@ -2,10 +2,15 @@
 
 import { useState } from 'react';
 import { type EditorState } from 'lexical';
+import { z } from 'zod';
+
+import { NewPostFormSchema } from '@/lib/schemas';
 
 import { AutosizeTextarea } from '@/components/ui/autosize-textarea';
 import { Btn } from '@/components/btn';
 import TextEditor from '@/components/editor/text-editor';
+
+export type FormFields = z.infer<typeof NewPostFormSchema>;
 
 export const NewPostForm = () => {
   const [title, setTitle] = useState<string | undefined>();
