@@ -8,8 +8,7 @@ export const NewPostFormSchema = z.object({
     .transform((title) => {
       return title.toLowerCase().trim();
     }),
-  group: z.string().refine((groupId) => !!groupId, {
-    message: 'Must select a group',
-  }),
-  content: z.string().refine((content) => JSON.parse(content)),
+  // group: z.string().refine((groupId) => !!groupId, {
+  //   message: 'Must select a group',
+  // }),
 });
