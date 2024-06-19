@@ -11,7 +11,7 @@ export const Navbar = async () => {
   return (
     <header className="bg-border px-6">
       <div className="mx-auto flex max-w-screen-lg items-center justify-between py-3">
-        <h1 className="font-bold text-white">
+        <h1 className="text-lg font-bold text-white">
           <Link href="/">HOUSTON HACKERS</Link>
         </h1>
 
