@@ -5,7 +5,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-export const PermissionCheck = async (props: Props) => {
+export const PermissionRequired = async (props: Props) => {
   const { permission, children } = props;
 
   const permissionType = permission.split(':')[0];

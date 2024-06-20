@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 
 import { Btn } from '@/components/btn';
 import { Avatar } from '@/components/user/avatar';
-import { PermissionCheck } from '@/components/access/permission-check';
+import { PermissionRequired } from '@/components/access/permission-required';
 
 const TABS = ['Comments', 'Posts'];
 
@@ -48,11 +48,11 @@ export const ProfileBanner = ({ user }: Props) => {
         </ul>
 
         <div className="px-2">
-          <PermissionCheck permission={`owner:${user.username}`}>
+          <PermissionRequired permission={`owner:${user.username}`}>
             <Btn size={'lg'} className="text-base font-semibold" asChild>
               <Link href={`${user.username}/posts/new`}>NEW POST</Link>
             </Btn>
-          </PermissionCheck>
+          </PermissionRequired>
         </div>
       </nav>
     </>

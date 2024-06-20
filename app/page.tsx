@@ -4,6 +4,8 @@ import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ChevronUp } from 'lucide-react';
 import Link from 'next/link';
+import { Btn } from '@/components/btn';
+import { LoginRequired } from '@/components/access/login-required';
 
 const TABS = ['Top', 'Newest', 'Groups'];
 
@@ -127,7 +129,7 @@ export default function Home() {
             <Link
               key={group.name}
               href="/"
-              className="flex items-center space-x-3 p-2 hover:bg-border"
+              className="flex items-center space-x-3 rounded-[3px] p-2 hover:bg-border"
             >
               <Avatar className="h-9 w-9 border-[3px] border-background">
                 <AvatarImage src={group.img} />
@@ -137,6 +139,10 @@ export default function Home() {
             </Link>
           ))}
         </ul>
+
+        <LoginRequired>
+          <Btn className="w-full font-semibold">CREATE GROUP</Btn>
+        </LoginRequired>
       </Card>
     </div>
   );
