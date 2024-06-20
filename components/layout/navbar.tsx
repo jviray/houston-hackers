@@ -1,12 +1,12 @@
+import Link from 'next/link';
 import { getCurrentUser } from '@/server/queries/users';
 
-import { AuthButtonGroup } from '@/components/layout/auth-btn-group';
+import { LoginRequired } from '@/components/access/login-required';
 import { Avatar } from '@/components/user/avatar';
-import Link from 'next/link';
+import { AuthButtonGroup } from '@/components/layout/auth-btn-group';
 
 export const Navbar = async () => {
   const user = await getCurrentUser();
-  const isLoggedIn = !!user;
 
   return (
     <header className="bg-border px-6">
@@ -16,15 +16,13 @@ export const Navbar = async () => {
         </h1>
 
         <div className="space-x-3">
-          {isLoggedIn ? (
+          <LoginRequired fallback={<AuthButtonGroup />}>
             <Avatar
               asLink
               className="outline-3 outline-white hover:outline"
-              user={user}
+              user={user!}
             />
-          ) : (
-            <AuthButtonGroup />
-          )}
+          </LoginRequired>
         </div>
       </div>
     </header>
