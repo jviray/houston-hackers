@@ -14,8 +14,9 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Btn } from '@/components/btn';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
+import { ChangeEvent, useState } from 'react';
 
 /**
  * TO DO:
@@ -27,6 +28,9 @@ import { Input } from '@/components/ui/input';
 export type FormFields = z.infer<typeof GroupSchema>;
 
 export const CreateGroupForm = () => {
+  const [file, setFile] = useState<File | undefined>();
+  const [fileUrl, setFileUrl] = useState<string | undefined>();
+
   const form = useForm<FormFields>({
     resolver: zodResolver(GroupSchema),
     defaultValues: {
@@ -35,6 +39,22 @@ export const CreateGroupForm = () => {
       description: '',
     },
   });
+
+  const onImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const newFile = e.target.files?.[0];
+    setFile(newFile);
+
+    if (fileUrl) {
+      URL.revokeObjectURL(fileUrl);
+    }
+
+    if (newFile) {
+      const url = URL.createObjectURL(newFile);
+      setFileUrl(url);
+    } else {
+      setFileUrl(undefined);
+    }
+  };
 
   const onSubmit = (fields: FormFields) => {
     console.log(fields);
@@ -54,9 +74,10 @@ export const CreateGroupForm = () => {
         {/* Form */}
         <form onSubmit={form.handleSubmit(onSubmit)} className="mt-3">
           <Avatar
-            onClick={() => document.getElementById('img-input')!.click()}
+            onClick={() => document.getElementById('image-input')!.click()}
             className="group relative grid h-24 w-24 cursor-pointer place-items-center border-[6px] text-center text-xs"
           >
+            <AvatarImage src={fileUrl} />
             <AvatarFallback className="bg-[#182e43]">Add photo</AvatarFallback>
 
             {/* Overlay */}
@@ -66,7 +87,13 @@ export const CreateGroupForm = () => {
               <ImageUp color="#fff" size={28} />
             </div>
 
-            <Input id="img-input" type="file" className="hidden" />
+            <Input
+              id="image-input"
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={onImageChange}
+            />
           </Avatar>
         </form>
       </DialogContent>
