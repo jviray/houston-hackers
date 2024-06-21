@@ -62,8 +62,10 @@ model Account {
 }
 
 model Group {
-  id   String @id
-  name String @unique
+  id          String  @id
+  name        String  @unique
+  image       String?
+  description String
 
   creator   User   @relation("CreatedBy", fields: [creatorId], references: [id])
   creatorId String

@@ -11,9 +11,8 @@ import {
 
 /**
  * TO DO:
- * - Image / Random Avatar
  * - Name
- * - Image
+ * - Image / Random Avatar
  * - Description
  */
 
