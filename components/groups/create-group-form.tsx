@@ -1,7 +1,7 @@
 'use client';
 
 import { ChangeEvent, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { ImageUp } from 'lucide-react';
@@ -26,7 +26,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-// import { AutosizeTextarea } from '@/components/ui/autosize-textarea';
 import { Textarea } from '@/components/ui/textarea';
 
 /**
@@ -46,7 +45,6 @@ export const CreateGroupForm = () => {
     resolver: zodResolver(GroupSchema),
     defaultValues: {
       name: '',
-      image: '',
       description: '',
     },
   });
@@ -67,8 +65,10 @@ export const CreateGroupForm = () => {
     }
   };
 
-  const onSubmit = async (fields: FormFields) => {
+  const onSubmit: SubmitHandler<FormFields> = async (fields) => {
     const signedUrl = await getSignedUrl();
+
+    console.log(signedUrl);
 
     console.log(fields);
   };

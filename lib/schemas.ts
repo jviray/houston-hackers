@@ -24,7 +24,7 @@ export const GroupSchema = z.object({
     .refine((val) => val !== '', {
       message: 'Name is required.',
     }),
-  image: z.string().url().optional(),
+  // image: z.string().url().optional(),
   description: z
     .string({ required_error: 'Description is required' })
     .min(6, 'Description must be at least 6 characters.')
