@@ -17,6 +17,7 @@ import { Btn } from '@/components/btn';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { ChangeEvent, useState } from 'react';
+import { getSignedUrl } from '@/server/actions/upload';
 
 /**
  * TO DO:
@@ -56,7 +57,9 @@ export const CreateGroupForm = () => {
     }
   };
 
-  const onSubmit = (fields: FormFields) => {
+  const onSubmit = async (fields: FormFields) => {
+    const signedUrl = await getSignedUrl();
+
     console.log(fields);
   };
 
