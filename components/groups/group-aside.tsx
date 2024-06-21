@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { LoginRequired } from '@/components/access/login-required';
-import { CreateGroup } from '@/components/groups/create-group';
+import { CreateGroupForm } from '@/components/groups/create-group-form';
 
 const GROUPS = [
   {
@@ -52,7 +52,7 @@ export const GroupAside = () => {
       </ul>
 
       <LoginRequired>
-        <CreateGroup />
+        <CreateGroupForm />
       </LoginRequired>
     </Card>
   );

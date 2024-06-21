@@ -1,6 +1,10 @@
 'use client';
 
-import { Btn } from '@/components/btn';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+
+import { GroupSchema } from '@/lib/schemas';
 
 import {
   Dialog,
@@ -8,6 +12,7 @@ import {
   DialogHeader,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { Btn } from '@/components/btn';
 
 /**
  * TO DO:
@@ -16,7 +21,18 @@ import {
  * - Description
  */
 
-export const CreateGroup = () => {
+export type FormFields = z.infer<typeof GroupSchema>;
+
+export const CreateGroupForm = () => {
+  const form = useForm<FormFields>({
+    resolver: zodResolver(GroupSchema),
+    defaultValues: {
+      name: '',
+      image: '',
+      description: '',
+    },
+  });
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -27,6 +43,8 @@ export const CreateGroup = () => {
         <DialogHeader>
           <h2 className="text-xl font-bold text-white">Create a new group</h2>
         </DialogHeader>
+
+        {/* Form */}
       </DialogContent>
     </Dialog>
   );
