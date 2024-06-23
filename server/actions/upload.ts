@@ -4,6 +4,7 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 import { getCurrentUser } from '@/server/queries/users';
+import { generateImageFilename } from '@/lib/utils';
 
 const s3 = new S3Client({
   region: process.env.AWS_BUCKET_REGION!,
@@ -37,7 +38,7 @@ export async function getImageSignedUrl(
 
   const putObjCommand = new PutObjectCommand({
     Bucket: process.env.AWS_BUCKET_NAME!,
-    Key: 'test-file',
+    Key: generateImageFilename(),
     ContentType: type,
     ContentLength: size,
     ChecksumSHA256: checksum,
