@@ -35,6 +35,16 @@ import { Textarea } from '@/components/ui/textarea';
  * - Description
  */
 
+const computeSHA256 = async (file: File) => {
+  const buffer = await file.arrayBuffer();
+  const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+  return hashHex;
+};
+
 export type FormFields = z.infer<typeof GroupSchema>;
 
 export const CreateGroupForm = () => {
@@ -68,7 +78,12 @@ export const CreateGroupForm = () => {
   const onSubmit: SubmitHandler<FormFields> = async (fields) => {
     try {
       if (file) {
-        const signedUrl = await getImageSignedUrl();
+        const checksum = await computeSHA256(file);
+        const signedUrl = await getImageSignedUrl(
+          file.type,
+          file.size,
+          checksum,
+        );
 
         if (signedUrl.error !== undefined) {
           throw new Error(signedUrl.error);
@@ -130,7 +145,7 @@ export const CreateGroupForm = () => {
                   <Input
                     id="image-input"
                     type="file"
-                    accept="image/*"
+                    accept="image/jpeg,image/png,image/webp"
                     className="hidden"
                     onChange={onImageChange}
                   />

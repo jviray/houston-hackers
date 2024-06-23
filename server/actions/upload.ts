@@ -13,15 +13,37 @@ const s3 = new S3Client({
   },
 });
 
-export async function getImageSignedUrl() {
+// TODO: Handle validation with Zod
+const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const MAX_FILE_SIZE = 1024 * 1024 * 10; // 10MB
+
+export async function getImageSignedUrl(
+  type: string,
+  size: number,
+  checksum: string,
+) {
   const user = await getCurrentUser();
   if (!user) {
     return { error: 'Not authenticated.' };
   }
 
+  if (!ACCEPTED_IMAGE_TYPES.includes(type)) {
+    return { error: 'Invalid file type.' };
+  }
+
+  if (size > MAX_FILE_SIZE) {
+    return { error: 'File is too large.' };
+  }
+
   const putObjCommand = new PutObjectCommand({
     Bucket: process.env.AWS_BUCKET_NAME!,
     Key: 'test-file',
+    ContentType: type,
+    ContentLength: size,
+    ChecksumSHA256: checksum,
+    Metadata: {
+      userId: user.id,
+    },
   });
 
   const signedUrl = await getSignedUrl(s3, putObjCommand, {
