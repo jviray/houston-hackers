@@ -27,6 +27,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
 
 const computeSHA256 = async (file: File) => {
   const buffer = await file.arrayBuffer();
@@ -57,17 +58,20 @@ export const CreateGroupForm = () => {
     },
   });
 
+  const { defaultValues, isDirty } = form.formState;
+
   const imageFile = useWatch({ control: form.control, name: 'imageFile' });
 
   useEffect(() => {
     if (imageFile?.name && imageFile.size) {
-      console.log('1');
       if (fileUrl) {
         URL.revokeObjectURL(fileUrl);
       }
 
       const url = URL.createObjectURL(imageFile);
       setFileUrl(url);
+    } else {
+      setFileUrl(undefined);
     }
   }, [imageFile]);
 
@@ -202,8 +206,34 @@ export const CreateGroupForm = () => {
               />
             </div>
 
-            <div className="flex justify-end">
+            <div className="flex items-center space-x-2">
               <Btn type="submit">SUBMIT GROUP</Btn>
+
+              {/* 
+                isDirty not triggered when file uploaded, so
+                we have to check if imageFile state has name and size.
+                If so, that means it's not the `dummy` default file value
+              */}
+              {((imageFile?.name && imageFile?.size) || isDirty) && (
+                <Button
+                  type="button"
+                  variant="link"
+                  onClick={() => {
+                    form.reset(defaultValues);
+
+                    // Need to manually clear out file input.
+                    // Reset won't clear it. As a result, re-uploading same file that was cancelled prior,
+                    // won't trigger useEffect (bc same file is still set as the value even though preview changed)
+                    const fileInput = document.getElementById(
+                      'image-input',
+                    ) as HTMLInputElement;
+                    fileInput.value = '';
+                  }}
+                  className="text-foreground"
+                >
+                  Cancel
+                </Button>
+              )}
             </div>
           </form>
         </Form>
