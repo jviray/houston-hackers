@@ -2,10 +2,10 @@ import { z } from 'zod';
 
 export const NewPostFormSchema = z.object({
   title: z
-    .string({ required_error: 'Title is required' })
+    .string({ required_error: 'Title is required.' })
     .min(6, 'Title must be at least 6 characters.')
     .max(128, 'Title cannot be longer than 128 characters.')
-    .refine((val) => val !== '', {
+    .refine((title) => title !== '', {
       message: 'Title is required.',
     })
     .transform((title) => {
@@ -16,20 +16,38 @@ export const NewPostFormSchema = z.object({
   // }),
 });
 
-export const GroupSchema = z.object({
+const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const MAX_FILE_SIZE = 1024 * 1024 * 10; // 10MB
+
+export const CreateGroupFormSchema = z.object({
   name: z
-    .string({ required_error: 'Name is required' })
+    .string({ required_error: 'Name is required.' })
     .min(3, 'Name must be at least 3 characters.')
     .max(21, 'Name cannot be longer than 21 characters.')
-    .refine((val) => val !== '', {
+    .refine((name) => name !== '', {
       message: 'Name is required.',
     }),
-  // image: z.string().url().optional(),
+  imageFile: z
+    .instanceof(File)
+    .optional()
+    // Becasue file is optional, only execute refine() if file exists
+    .refine((file) => {
+      return !file || file.size <= MAX_FILE_SIZE;
+    }, 'File is too large.')
+    .refine((file) => {
+      // Account for `empty` default file (empty file name and size)
+      return (
+        !file ||
+        !file.name ||
+        !file.size ||
+        ACCEPTED_IMAGE_TYPES.includes(file.type)
+      );
+    }, 'Invalid file type.'),
   description: z
     .string({ required_error: 'Description is required' })
     .min(6, 'Description must be at least 6 characters.')
     .max(280, 'Description cannot be longer than 280 characters.')
-    .refine((val) => val !== '', {
+    .refine((description) => description !== '', {
       message: 'Description is required.',
     }),
 });

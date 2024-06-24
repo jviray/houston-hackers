@@ -1,12 +1,12 @@
 'use client';
 
-import { ChangeEvent, useState } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { SubmitHandler, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { ImageUp } from 'lucide-react';
 
-import { GroupSchema } from '@/lib/schemas';
+import { CreateGroupFormSchema } from '@/lib/schemas';
 import { getImageSignedUrl } from '@/server/actions/upload';
 
 import {
@@ -28,13 +28,6 @@ import {
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 
-/**
- * TO DO:
- * - Name
- * - Image / Random Avatar
- * - Description
- */
-
 const computeSHA256 = async (file: File) => {
   const buffer = await file.arrayBuffer();
   const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
@@ -45,64 +38,68 @@ const computeSHA256 = async (file: File) => {
   return hashHex;
 };
 
-export type FormFields = z.infer<typeof GroupSchema>;
+export type FormFields = z.infer<typeof CreateGroupFormSchema>;
+
+/**
+ * TODO:
+ * - Allow removing photo
+ */
 
 export const CreateGroupForm = () => {
-  const [file, setFile] = useState<File | undefined>();
   const [fileUrl, setFileUrl] = useState<string | undefined>();
 
   const form = useForm<FormFields>({
-    resolver: zodResolver(GroupSchema),
+    resolver: zodResolver(CreateGroupFormSchema),
     defaultValues: {
       name: '',
+      imageFile: new File([], ''),
       description: '',
     },
   });
 
-  const onImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const newFile = e.target.files?.[0];
-    setFile(newFile);
+  const imageFile = useWatch({ control: form.control, name: 'imageFile' });
 
-    if (fileUrl) {
-      URL.revokeObjectURL(fileUrl);
-    }
+  useEffect(() => {
+    if (imageFile?.name && imageFile.size) {
+      console.log('1');
+      if (fileUrl) {
+        URL.revokeObjectURL(fileUrl);
+      }
 
-    if (newFile) {
-      const url = URL.createObjectURL(newFile);
+      const url = URL.createObjectURL(imageFile);
       setFileUrl(url);
-    } else {
-      setFileUrl(undefined);
     }
-  };
+  }, [imageFile]);
 
   const onSubmit: SubmitHandler<FormFields> = async (fields) => {
-    try {
-      if (file) {
-        const checksum = await computeSHA256(file);
-        const signedUrl = await getImageSignedUrl(
-          file.type,
-          file.size,
-          checksum,
-        );
+    console.log(fields);
+    // try {
+    //   if (file) {
+    //     const checksum = await computeSHA256(file);
+    //     const signedUrl = await getImageSignedUrl(
+    //       file.type,
+    //       file.size,
+    //       checksum,
+    //     );
 
-        if (signedUrl.error !== undefined) {
-          throw new Error(signedUrl.error);
-        }
+    //     if (signedUrl.error !== undefined) {
+    //       throw new Error(signedUrl.error);
+    //     }
 
-        const url = signedUrl.success?.url;
+    //     const url = signedUrl.success?.url;
 
-        await fetch(url, {
-          method: 'PUT',
-          body: file,
-          headers: {
-            'Content-Type': file.type,
-          },
-        });
-      }
-    } catch (error) {
-      // Show UI message for error
-      console.error(error);
-    }
+    //     await fetch(url, {
+    //       method: 'PUT',
+    //       body: file,
+    //       headers: {
+    //         'Content-Type': file.type,
+    //       },
+    //     });
+    //   }
+    // } catch (error) {
+    //   // Show UI message for error
+    //   console.error(error);
+    // }
   };
 
   return (
@@ -124,32 +121,47 @@ export const CreateGroupForm = () => {
           >
             <div className="space-y-6">
               <div className="flex space-x-6">
-                <Avatar
-                  onClick={() =>
-                    document.getElementById('image-input')!.click()
-                  }
-                  className="group relative grid h-24 w-24 cursor-pointer place-items-center border-[6px] text-center text-xs"
-                >
-                  <AvatarImage src={fileUrl} />
-                  <AvatarFallback className="bg-[#182e43]">
-                    Add image
-                  </AvatarFallback>
+                <FormField
+                  control={form.control}
+                  name="imageFile"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Avatar
+                        onClick={() =>
+                          document.getElementById('image-input')!.click()
+                        }
+                        className="group relative grid h-24 w-24 cursor-pointer place-items-center border-[6px] text-center text-xs"
+                      >
+                        <AvatarImage src={fileUrl} />
+                        <AvatarFallback className="bg-[#182e43]">
+                          Add image
+                        </AvatarFallback>
 
-                  {/* Overlay */}
-                  <div className="absolute bottom-0 left-0 right-0 top-0 group-hover:bg-black group-hover:opacity-40"></div>
-                  {/* Icon Overlay */}
-                  <div className="absolute hidden h-full w-full group-hover:grid group-hover:place-items-center">
-                    <ImageUp color="#fff" size={28} />
-                  </div>
+                        {/* Overlay */}
+                        <div className="absolute bottom-0 left-0 right-0 top-0 group-hover:bg-black group-hover:opacity-40"></div>
+                        {/* Icon Overlay */}
+                        <div className="absolute hidden h-full w-full group-hover:grid group-hover:place-items-center">
+                          <ImageUp color="#fff" size={28} />
+                        </div>
 
-                  <Input
-                    id="image-input"
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    className="hidden"
-                    onChange={onImageChange}
-                  />
-                </Avatar>
+                        <FormControl>
+                          <Input
+                            id="image-input"
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp"
+                            className="hidden"
+                            onChange={(e) => {
+                              const selectedFile = e.target.files?.[0];
+                              // Only trigger field.onChange if file actually selected
+                              if (selectedFile) field.onChange(selectedFile);
+                            }}
+                          />
+                        </FormControl>
+                      </Avatar>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <FormField
                   control={form.control}
