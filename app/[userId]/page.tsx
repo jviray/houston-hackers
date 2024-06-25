@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { getUserByUsername } from '@/server/queries/users';
+import { fetchUserByUsername } from '@/server/queries';
 import { ProfileBanner } from '@/components/user/profile-banner';
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
 export default async function ProfilePage({ params }: Props) {
   const { userId } = params;
 
-  const user = await getUserByUsername(userId);
+  const user = await fetchUserByUsername(userId);
 
   if (!user) return;
 

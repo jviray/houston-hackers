@@ -5,7 +5,7 @@ import { Adapter } from 'next-auth/adapters';
 
 import { db } from '@/server/db';
 import { createUser } from '@/server/mutations/users';
-import { getUserById } from '@/server/queries/users';
+import { fetchUserById } from '@/server/queries';
 
 export const options = {
   providers: [
@@ -19,7 +19,7 @@ export const options = {
     async jwt({ token }) {
       if (!token.sub) return token;
 
-      const user = await getUserById(token.sub);
+      const user = await fetchUserById(token.sub);
       if (!user) return token;
 
       token.username = user.username;

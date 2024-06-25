@@ -9,7 +9,7 @@ import {
 } from 'next';
 import { getServerSession } from 'next-auth';
 
-import { getUserByUsername } from '@/server/queries/users';
+import { fetchUserByUsername } from '@/server/queries';
 import { options as authOptions } from '@/config/auth';
 
 export function cn(...inputs: ClassValue[]) {
@@ -22,7 +22,7 @@ export const generateId = () => {
 
 export const generateUsernameFromEmail = async (email: string) => {
   let username = email.split('@')[0].toLowerCase().trim();
-  const existingUser = await getUserByUsername(username);
+  const existingUser = await fetchUserByUsername(username);
 
   if (existingUser) {
     const randomNum = crypto.randomInt(100, 999).toString();
