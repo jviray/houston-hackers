@@ -1,1 +1,1 @@
-export { getImageSignedUrl } from './upload';
+export { requestSignedUrl } from './upload';

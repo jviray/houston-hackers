@@ -10,7 +10,7 @@ import { generateImageFilename, getCurrentUser } from '@/lib/utils';
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_FILE_SIZE = 1024 * 1024 * 10; // 10MB
 
-export const getImageSignedUrl = async (
+export const requestSignedUrl = async (
   type: string,
   size: number,
   checksum: string,

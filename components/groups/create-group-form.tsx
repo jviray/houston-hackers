@@ -7,7 +7,8 @@ import { z } from 'zod';
 import { ImageUp } from 'lucide-react';
 
 import { CreateGroupFormSchema } from '@/lib/schemas';
-import { getImageSignedUrl } from '@/server/actions';
+import { requestSignedUrl } from '@/server/actions';
+import { generateSHA256 } from '@/lib/utils';
 
 import {
   Dialog,
@@ -28,16 +29,6 @@ import {
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-
-const computeSHA256 = async (file: File) => {
-  const buffer = await file.arrayBuffer();
-  const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
-  return hashHex;
-};
 
 export type FormFields = z.infer<typeof CreateGroupFormSchema>;
 
@@ -76,30 +67,31 @@ export const CreateGroupForm = () => {
   }, [imageFile]);
 
   const onSubmit: SubmitHandler<FormFields> = async (values) => {
-    // try {
-    //   if (file) {
-    //     const checksum = await computeSHA256(file);
-    //     const signedUrl = await getImageSignedUrl(
-    //       file.type,
-    //       file.size,
-    //       checksum,
-    //     );
-    //     if (signedUrl.error !== undefined) {
-    //       throw new Error(signedUrl.error);
-    //     }
-    //     const url = signedUrl.success?.url;
-    //     await fetch(url, {
-    //       method: 'PUT',
-    //       body: file,
-    //       headers: {
-    //         'Content-Type': file.type,
-    //       },
-    //     });
-    //   }
-    // } catch (error) {
-    //   // Show UI message for error
-    //   console.error(error);
-    // }
+    const { imageFile: file } = values;
+    try {
+      if (file) {
+        const checksum = await generateSHA256(file);
+        const signedUrl = await requestSignedUrl(
+          file.type,
+          file.size,
+          checksum,
+        );
+        if (signedUrl.error !== undefined) {
+          throw new Error(signedUrl.error);
+        }
+        const url = signedUrl.success?.url;
+        await fetch(url, {
+          method: 'PUT',
+          body: file,
+          headers: {
+            'Content-Type': file.type,
+          },
+        });
+      }
+    } catch (error) {
+      // Show UI message for error
+      console.error(error);
+    }
   };
 
   return (

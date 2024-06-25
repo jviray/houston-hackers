@@ -1,7 +1,7 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { nanoid } from 'nanoid';
-import crypto from 'crypto';
+import cryptoLib from 'crypto';
 import {
   GetServerSidePropsContext,
   NextApiRequest,
@@ -25,7 +25,7 @@ export const generateUsernameFromEmail = async (email: string) => {
   const existingUser = await fetchUserByUsername(username);
 
   if (existingUser) {
-    const randomNum = crypto.randomInt(100, 999).toString();
+    const randomNum = cryptoLib.randomInt(100, 999).toString();
     username = `${username}${randomNum}`;
   }
 
@@ -37,8 +37,18 @@ export const getCurrentUser = async () => {
   return session?.user;
 };
 
+export const generateSHA256 = async (file: File) => {
+  const buffer = await file.arrayBuffer();
+  const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+  return hashHex;
+};
+
 export const generateImageFilename = (bytes = 32) =>
-  crypto.randomBytes(bytes).toString('hex');
+  cryptoLib.randomBytes(bytes).toString('hex');
 
 // Helper function for use in server contexts
 export function auth(
