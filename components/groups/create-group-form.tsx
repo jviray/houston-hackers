@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { ImageUp } from 'lucide-react';
 
 import { CreateGroupFormSchema } from '@/lib/schemas';
-import { getImageSignedUrl } from '@/server/actions/upload';
+import { getImageSignedUrl } from '@/server/actions';
 
 import {
   Dialog,
@@ -75,8 +75,7 @@ export const CreateGroupForm = () => {
     }
   }, [imageFile]);
 
-  const onSubmit: SubmitHandler<FormFields> = async (fields) => {
-    console.log(fields);
+  const onSubmit: SubmitHandler<FormFields> = async (values) => {
     // try {
     //   if (file) {
     //     const checksum = await computeSHA256(file);
@@ -85,13 +84,10 @@ export const CreateGroupForm = () => {
     //       file.size,
     //       checksum,
     //     );
-
     //     if (signedUrl.error !== undefined) {
     //       throw new Error(signedUrl.error);
     //     }
-
     //     const url = signedUrl.success?.url;
-
     //     await fetch(url, {
     //       method: 'PUT',
     //       body: file,
