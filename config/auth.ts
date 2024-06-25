@@ -4,7 +4,7 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import { Adapter } from 'next-auth/adapters';
 
 import { db } from '@/server/db';
-import { createUser } from '@/server/mutations/users';
+import { createUser } from '@/server/mutations';
 import { fetchUserById } from '@/server/queries';
 
 export const options = {
