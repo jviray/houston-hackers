@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/server/queries/users';
+import { getCurrentUser } from '@/lib/utils';
 
 type Props = {
   permission: string;

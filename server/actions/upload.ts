@@ -4,8 +4,7 @@ import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 import { awsS3 } from '@/config/aws';
-import { getCurrentUser } from '@/server/queries/users';
-import { generateImageFilename } from '@/lib/utils';
+import { generateImageFilename, getCurrentUser } from '@/lib/utils';
 
 // TODO: Handle validation with Zod
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];

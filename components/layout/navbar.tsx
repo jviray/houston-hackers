@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { getCurrentUser } from '@/server/queries/users';
+
+import { getCurrentUser } from '@/lib/utils';
 
 import { LoginRequired } from '@/components/access/login-required';
 import { Avatar } from '@/components/user/avatar';

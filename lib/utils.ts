@@ -32,6 +32,11 @@ export const generateUsernameFromEmail = async (email: string) => {
   return username;
 };
 
+export const getCurrentUser = async () => {
+  const session = await auth();
+  return session?.user;
+};
+
 export const generateImageFilename = (bytes = 32) =>
   crypto.randomBytes(bytes).toString('hex');
 
