@@ -4,30 +4,22 @@ import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 import { awsS3 } from '@/config/aws';
-import { generateImageFilename, getCurrentUser } from '@/lib/utils';
+import {
+  createServerAction,
+  generateImageFilename,
+  generateSHA256,
+  getCurrentUser,
+  validate,
+} from '@/lib/utils';
+import { User } from '@prisma/client';
+import { ImageFileSchema } from '@/lib/schemas';
 
-// TODO: Handle validation with Zod
-const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-const MAX_FILE_SIZE = 1024 * 1024 * 10; // 10MB
-
-export const requestSignedUrl = async (
+const requestSignedUrl = async (
+  userId: string,
   type: string,
   size: number,
   checksum: string,
 ) => {
-  const user = await getCurrentUser();
-  if (!user) {
-    return { error: 'Not authenticated.' };
-  }
-
-  if (!ACCEPTED_IMAGE_TYPES.includes(type)) {
-    return { error: 'Invalid file type.' };
-  }
-
-  if (size > MAX_FILE_SIZE) {
-    return { error: 'File is too large.' };
-  }
-
   const putObjCommand = new PutObjectCommand({
     Bucket: process.env.AWS_BUCKET_NAME!,
     Key: generateImageFilename(),
@@ -35,7 +27,7 @@ export const requestSignedUrl = async (
     ContentLength: size,
     ChecksumSHA256: checksum,
     Metadata: {
-      userId: user.id,
+      userId,
     },
   });
 
@@ -43,5 +35,39 @@ export const requestSignedUrl = async (
     expiresIn: 60,
   });
 
-  return { success: { url: signedUrl } };
+  return signedUrl;
 };
+
+const uploadMedia = async (file: File, user: User) => {
+  const checksum = await generateSHA256(file);
+  const signedUrl = await requestSignedUrl(
+    user.id,
+    file.type,
+    file.size,
+    checksum,
+  );
+
+  const res = await fetch(signedUrl, {
+    method: 'PUT',
+    body: file,
+    headers: {
+      'Content-Type': file.type,
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error('Could not upload to s3 url.');
+  }
+
+  return signedUrl.split('?')[0];
+};
+
+export const uploadImage = createServerAction(
+  validate(ImageFileSchema),
+  async (formFile: FormData, user: User) => {
+    const file = formFile.get('imageFile') as File;
+    return await uploadMedia(file, user);
+  },
+)({
+  requireAuthentication: true,
+});

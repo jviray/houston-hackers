@@ -7,8 +7,7 @@ import { z } from 'zod';
 import { ImageUp } from 'lucide-react';
 
 import { CreateGroupFormSchema } from '@/lib/schemas';
-import { requestSignedUrl } from '@/server/actions';
-import { generateSHA256 } from '@/lib/utils';
+import { uploadImage } from '@/server/actions';
 
 import {
   Dialog,
@@ -38,8 +37,6 @@ export type FormFields = z.infer<typeof CreateGroupFormSchema>;
  */
 
 export const CreateGroupForm = () => {
-  const [fileUrl, setFileUrl] = useState<string | undefined>();
-
   const form = useForm<FormFields>({
     resolver: zodResolver(CreateGroupFormSchema),
     defaultValues: {
@@ -50,6 +47,8 @@ export const CreateGroupForm = () => {
   });
 
   const { defaultValues, isDirty } = form.formState;
+
+  const [fileUrl, setFileUrl] = useState<string | undefined>();
 
   const imageFile = useWatch({ control: form.control, name: 'imageFile' });
 
@@ -66,31 +65,22 @@ export const CreateGroupForm = () => {
     }
   }, [imageFile]);
 
-  const onSubmit: SubmitHandler<FormFields> = async (values) => {
-    const { imageFile: file } = values;
+  const onSubmit: SubmitHandler<FormFields> = async (data) => {
+    const { imageFile } = data;
     try {
-      if (file) {
-        const checksum = await generateSHA256(file);
-        const signedUrl = await requestSignedUrl(
-          file.type,
-          file.size,
-          checksum,
-        );
-        if (signedUrl.error !== undefined) {
-          throw new Error(signedUrl.error);
-        }
-        const url = signedUrl.success?.url;
-        await fetch(url, {
-          method: 'PUT',
-          body: file,
-          headers: {
-            'Content-Type': file.type,
-          },
-        });
+      let imageUrl;
+      if (imageFile) {
+        const formFile = new FormData();
+        formFile.append('imageFile', imageFile);
+        const res = await uploadImage(formFile);
+        if (res.error) throw new Error(res.error);
+        imageUrl = res.payload?.data;
+        console.log(imageUrl);
       }
     } catch (error) {
-      // Show UI message for error
-      console.error(error);
+      if (error instanceof Error) {
+        console.error(error);
+      }
     }
   };
 

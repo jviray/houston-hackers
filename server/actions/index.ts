@@ -1,1 +1,3 @@
-export { requestSignedUrl } from './upload';
+export { uploadImage } from './upload';
+
+export { submitNewGroup } from './groups';

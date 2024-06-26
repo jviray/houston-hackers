@@ -17,7 +17,25 @@ export const NewPostFormSchema = z.object({
 });
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-const MAX_FILE_SIZE = 1024 * 1024 * 10; // 10MB
+const MAX_AVATAR_SIZE = 1024 * 1024; // 1MB
+
+export const ImageFileSchema = z.object({
+  imageFile: z
+    .instanceof(File)
+    // Becasue file is optional, only execute refine() if file exists
+    .refine((file) => {
+      return !file || file.size <= MAX_AVATAR_SIZE;
+    }, 'File is too large.')
+    .refine((file) => {
+      // Account for `empty` default file (empty file name and size)
+      return (
+        !file ||
+        !file.name ||
+        !file.size ||
+        ACCEPTED_IMAGE_TYPES.includes(file.type)
+      );
+    }, 'Invalid file type.'),
+});
 
 export const CreateGroupFormSchema = z.object({
   name: z
@@ -32,7 +50,7 @@ export const CreateGroupFormSchema = z.object({
     .optional()
     // Becasue file is optional, only execute refine() if file exists
     .refine((file) => {
-      return !file || file.size <= MAX_FILE_SIZE;
+      return !file || file.size <= MAX_AVATAR_SIZE;
     }, 'File is too large.')
     .refine((file) => {
       // Account for `empty` default file (empty file name and size)
