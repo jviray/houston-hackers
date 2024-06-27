@@ -5,13 +5,28 @@ import { User } from '@prisma/client';
 
 import { NewGroupSchema } from '@/lib/schemas';
 import { db } from '@/server/db';
-import { createServerAction, generateId, validate } from '@/lib/utils';
+import {
+  checkUnique,
+  createServerAction,
+  generateId,
+  validate,
+} from '@/lib/utils';
+import { fetchGroupByName } from '../queries/groups';
 
 type NewGroupData = z.infer<typeof NewGroupSchema>;
 
+const checkUniqueGroupName = checkUnique<NewGroupData>(
+  async ({ name }) => {
+    return await fetchGroupByName(name);
+  },
+  {
+    message: 'Name is already taken',
+  },
+);
+
 export const submitNewGroup = createServerAction(
   validate(NewGroupSchema),
-  // check unique name
+  checkUniqueGroupName,
   async (data: NewGroupData, user: User) => {
     const { name, description, image } = data;
     return await db.group.create({
