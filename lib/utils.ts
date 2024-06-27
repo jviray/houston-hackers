@@ -100,7 +100,7 @@ type Result = {
   success?: string;
   error?: string;
   payload?: {
-    data: unknown;
+    data: any;
   };
 };
 

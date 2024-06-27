@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { ImageUp } from 'lucide-react';
 
 import { CreateGroupFormSchema } from '@/lib/schemas';
-import { uploadImage } from '@/server/actions';
+import { submitNewGroup, uploadImage } from '@/server/actions';
 
 import {
   Dialog,
@@ -29,7 +29,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 
-export type FormFields = z.infer<typeof CreateGroupFormSchema>;
+type FormFields = z.infer<typeof CreateGroupFormSchema>;
 
 /**
  * TODO:
@@ -66,17 +66,27 @@ export const CreateGroupForm = () => {
   }, [imageFile]);
 
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
-    const { imageFile } = data;
+    const { imageFile, name, description } = data;
     try {
       let imageUrl;
-      if (imageFile) {
+      if (imageFile?.name && imageFile.size) {
         const formFile = new FormData();
         formFile.append('imageFile', imageFile);
         const res = await uploadImage(formFile);
+
         if (res.error) throw new Error(res.error);
+
         imageUrl = res.payload?.data;
         console.log(imageUrl);
       }
+
+      const res = await submitNewGroup({
+        name,
+        image: imageUrl,
+        description,
+      });
+
+      if (res.error) throw new Error(res.error);
     } catch (error) {
       if (error instanceof Error) {
         console.error(error);
