@@ -32,4 +32,5 @@ export const submitNewGroup = createServerAction(
   requireAuthentication: true,
   successMessage: 'Group created!',
   errorMessage: 'Failed to create group.',
+  pathToRevalidate: '/',
 });

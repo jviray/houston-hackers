@@ -1,9 +1,13 @@
 import Link from 'next/link';
 
+import { db } from '@/server/db';
+
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { LoginRequired } from '@/components/access/login-required';
 import { CreateGroupForm } from '@/components/groups/create-group-form';
+import { capitalize } from '@/lib/utils';
+import { fetchAllGroups } from '@/server/queries';
 
 const GROUPS = [
   {
@@ -28,7 +32,9 @@ const GROUPS = [
   },
 ];
 
-export const GroupAside = () => {
+export const GroupAside = async () => {
+  const groups = await fetchAllGroups();
+
   return (
     <Card className="col-span-2 space-y-3 self-start rounded-[3px] border-[3px] p-2">
       <div className="bg-[#182e43] p-3">
@@ -36,17 +42,17 @@ export const GroupAside = () => {
       </div>
 
       <ul className="space-y-1">
-        {GROUPS.map((group) => (
+        {groups.map((group) => (
           <Link
             key={group.name}
             href="/"
             className="flex items-center space-x-3 rounded-[3px] p-2 hover:bg-border"
           >
-            <Avatar className="h-9 w-9 border-[3px] border-background">
-              <AvatarImage src={group.img} />
-            </Avatar>
+            {/* <Avatar className="h-9 w-9 border-[3px] border-background">
+              <AvatarImage src={group.image as string | undefined} />
+            </Avatar> */}
 
-            <h3 className="text-white">{group.name}</h3>
+            <h3 className="text-white">{capitalize(group.name)}</h3>
           </Link>
         ))}
       </ul>

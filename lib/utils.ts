@@ -1,13 +1,14 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { nanoid } from 'nanoid';
-import cryptoLib, { verify } from 'crypto';
+import cryptoLib from 'crypto';
 import {
   GetServerSidePropsContext,
   NextApiRequest,
   NextApiResponse,
 } from 'next';
 import { getServerSession } from 'next-auth';
+import { revalidatePath } from 'next/cache';
 
 import { fetchUserByUsername } from '@/server/queries';
 import { options as authOptions } from '@/config/auth';
@@ -20,6 +21,16 @@ export function cn(...inputs: ClassValue[]) {
 export const generateId = () => {
   return nanoid(16);
 };
+
+export function capitalize(input: string) {
+  // Removes extra space in the middle, trims leading and trailing spaces and converts to array
+  const words = input.replace(/\s+/g, ' ').trim().split(' ');
+
+  // Capitalizes each word and converts back to string
+  return words
+    .map((word) => word[0].toUpperCase() + word.substring(1).toLowerCase())
+    .join(' ');
+}
 
 export const generateUsernameFromEmail = async (email: string) => {
   let username = email.split('@')[0].toLowerCase().trim();
@@ -108,6 +119,7 @@ export const createServerAction =
   <T>(...fns: ((data: T, ...args: any[]) => unknown)[]) =>
   (options?: {
     requireAuthentication?: boolean;
+    pathToRevalidate?: string;
     successMessage?: string;
     errorMessage?: string;
   }) =>
@@ -135,6 +147,11 @@ export const createServerAction =
         serverActionResult = await serverAction(data, user, ...args);
       } else {
         serverActionResult = await serverAction(data, ...args);
+      }
+
+      // Revalidate
+      if (options?.pathToRevalidate) {
+        revalidatePath(options.pathToRevalidate);
       }
     } catch (error: unknown) {
       // Anything is assignable to unknown, but unknown isn't assignable to anything but itself
