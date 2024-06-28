@@ -41,7 +41,7 @@ export const CreateGroupFormSchema = z.object({
   name: z
     .string({ required_error: 'Name is required.' })
     .min(3, 'Name must be at least 3 characters.')
-    .max(21, 'Name cannot be longer than 21 characters.')
+    .max(40, 'Name cannot be longer than 40 characters.')
     .regex(/^[\s]?[^\s]*([\s]?[^\s]+)*[\s]?$/, 'Invalid format.')
     .refine((name) => name !== '', {
       message: 'Name is required.',
@@ -81,7 +81,7 @@ export const NewGroupSchema = z.object({
   name: z
     .string({ required_error: 'Name is required.' })
     .min(3, 'Name must be at least 3 characters.')
-    .max(21, 'Name cannot be longer than 21 characters.')
+    .max(40, 'Name cannot be longer than 40 characters.')
     .regex(/^[\s]?[^\s]*([\s]?[^\s]+)*[\s]?$/, 'Invalid format.')
     .refine((name) => name !== '', {
       message: 'Name is required.',

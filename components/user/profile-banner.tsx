@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
 import { Btn } from '@/components/btn';
-import { Avatar } from '@/components/user/avatar';
+import { UserAvatar } from '@/components/user/avatar';
 import { PermissionRequired } from '@/components/access/permission-required';
 
 const TABS = ['Comments', 'Posts'];
@@ -17,7 +17,10 @@ export const ProfileBanner = ({ user }: Props) => {
   return (
     <>
       <header className="flex items-center gap-8 rounded-t-[3px] bg-border p-11">
-        <Avatar className="h-28 w-28 border-8 border-background" user={user} />
+        <UserAvatar
+          className="h-28 w-28 border-8 border-background"
+          data={user}
+        />
 
         <div>
           <h1 className="text-[36px] font-semibold leading-relaxed text-white">

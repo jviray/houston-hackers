@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { getCurrentUser } from '@/lib/utils';
 
 import { LoginRequired } from '@/components/access/login-required';
-import { Avatar } from '@/components/user/avatar';
+import { UserAvatar } from '@/components/user/avatar';
 import { AuthButtonGroup } from '@/components/layout/auth-btn-group';
 
 export const Navbar = async () => {
@@ -18,10 +18,10 @@ export const Navbar = async () => {
 
         <div className="space-x-3">
           <LoginRequired fallback={<AuthButtonGroup />}>
-            <Avatar
+            <UserAvatar
               asLink
               className="outline-3 outline-white hover:outline"
-              user={user!}
+              data={user!}
             />
           </LoginRequired>
         </div>

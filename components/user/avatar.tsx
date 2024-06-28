@@ -1,4 +1,4 @@
-import { User } from '@prisma/client';
+import { Group, Post, User } from '@prisma/client';
 import Link from 'next/link';
 import { default as BoringAvatar } from 'boring-avatars';
 
@@ -9,35 +9,52 @@ import {
 } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 
-type AvatarProps = {
+type AvatarAccount = Pick<Group, 'id' | 'image'> & {
+  name: string | null;
+  username?: string | null;
+};
+
+type AvatarProps<T> = {
   className?: string;
   asLink?: boolean;
-  user: Partial<User>;
+  data: Partial<T>;
 };
 
-export const Avatar = (props: AvatarProps) => {
-  const { className, asLink = false, user } = props;
+const BoringAvatarVariants = {
+  user: 'beam',
+  group: 'bauhaus',
+} as const; // Explained: https://stackoverflow.com/questions/72340281/ts2322-type-string-is-not-assignable-to-type-union-of-strings
 
-  const component = (
-    <ShadcnAvatar className={className}>
-      <AvatarImage src={user.image as string | undefined} />
+const Avatar =
+  <T extends AvatarAccount>(type: 'user' | 'group') =>
+  (props: AvatarProps<T>) => {
+    const { className, asLink = false, data } = props;
 
-      <Skeleton className="h-full w-full rounded-full" />
+    const component = (
+      <ShadcnAvatar className={className}>
+        <AvatarImage src={data.image as string | undefined} />
 
-      <AvatarFallback delayMs={1000}>
-        <BoringAvatar
-          size={100}
-          name={user.email}
-          variant="beam"
-          colors={['#fb7968', '#f9c593', '#fafad4', '#b0d1b2', '#89b2a2']}
-        />
-      </AvatarFallback>
-    </ShadcnAvatar>
-  );
+        <Skeleton className="h-full w-full rounded-full" />
 
-  return asLink ? (
-    <Link href={`/${user.username}`}>{component}</Link>
-  ) : (
-    component
-  );
-};
+        <AvatarFallback delayMs={1000}>
+          <BoringAvatar
+            size={100}
+            name={data.id}
+            variant={BoringAvatarVariants[type]}
+            colors={['#fb7968', '#f9c593', '#fafad4', '#b0d1b2', '#89b2a2']}
+          />
+        </AvatarFallback>
+      </ShadcnAvatar>
+    );
+
+    return asLink ? (
+      <Link href={`/${type === 'user' ? data.username : data.name}`}>
+        {component}
+      </Link>
+    ) : (
+      component
+    );
+  };
+
+export const UserAvatar = Avatar<User>('user');
+export const GroupAvatar = Avatar<Group>('group');
