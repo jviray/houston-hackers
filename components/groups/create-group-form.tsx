@@ -89,7 +89,11 @@ export const CreateGroupForm = () => {
           description,
         });
 
-        if (res.error) throw new Error(res.error);
+        if (res.success) {
+          form.reset();
+        } else if (res.error) {
+          throw new Error(res.error);
+        }
       } catch (error) {
         if (error instanceof Error) {
           console.error(error);
