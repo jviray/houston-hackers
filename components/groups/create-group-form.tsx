@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { ImageUp } from 'lucide-react';
+import { ImageUp, Loader2 } from 'lucide-react';
 
 import { CreateGroupFormSchema } from '@/lib/schemas';
+import { cn, delay } from '@/lib/utils';
 import { submitNewGroup, uploadImage } from '@/server/actions';
 
 import {
@@ -65,33 +66,36 @@ export const CreateGroupForm = () => {
     }
   }, [imageFile]);
 
+  const [isPending, startTransition] = useTransition();
+
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
-    const { imageFile, name, description } = data;
-    try {
-      let imageUrl;
-      if (imageFile?.name && imageFile.size) {
-        const formFile = new FormData();
-        formFile.append('imageFile', imageFile);
-        const res = await uploadImage(formFile);
+    startTransition(async () => {
+      const { imageFile, name, description } = data;
+      try {
+        let imageUrl;
+        if (imageFile?.name && imageFile.size) {
+          const formFile = new FormData();
+          formFile.append('imageFile', imageFile);
+          const res = await uploadImage(formFile);
+
+          if (res.error) throw new Error(res.error);
+
+          imageUrl = res.payload?.data;
+        }
+
+        const res = await submitNewGroup({
+          name,
+          image: imageUrl,
+          description,
+        });
 
         if (res.error) throw new Error(res.error);
-
-        imageUrl = res.payload?.data;
-        console.log(imageUrl);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error);
+        }
       }
-
-      const res = await submitNewGroup({
-        name,
-        image: imageUrl,
-        description,
-      });
-
-      if (res.error) throw new Error(res.error);
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error(error);
-      }
-    }
+    });
   };
 
   return (
@@ -122,7 +126,10 @@ export const CreateGroupForm = () => {
                         onClick={() =>
                           document.getElementById('image-input')!.click()
                         }
-                        className="group relative grid h-24 w-24 cursor-pointer place-items-center border-[6px] text-center text-xs"
+                        className={cn(
+                          'group relative grid h-24 w-24 cursor-pointer place-items-center border-[6px] text-center text-xs',
+                          isPending && 'cursor-not-allowed',
+                        )}
                       >
                         <AvatarImage src={fileUrl} />
                         <AvatarFallback className="bg-[#182e43]">
@@ -130,14 +137,22 @@ export const CreateGroupForm = () => {
                         </AvatarFallback>
 
                         {/* Overlay */}
-                        <div className="absolute bottom-0 left-0 right-0 top-0 group-hover:bg-black group-hover:opacity-40"></div>
+                        <div
+                          className={cn(
+                            'absolute bottom-0 left-0 right-0 top-0 group-hover:bg-black group-hover:opacity-40',
+                            isPending && 'bg-black opacity-40',
+                          )}
+                        ></div>
                         {/* Icon Overlay */}
-                        <div className="absolute hidden h-full w-full group-hover:grid group-hover:place-items-center">
-                          <ImageUp color="#fff" size={28} />
-                        </div>
+                        {!isPending && (
+                          <div className="absolute hidden h-full w-full group-hover:grid group-hover:place-items-center">
+                            <ImageUp color="#fff" size={28} />
+                          </div>
+                        )}
 
                         <FormControl>
                           <Input
+                            disabled={isPending}
                             id="image-input"
                             type="file"
                             accept="image/jpeg,image/png,image/webp"
@@ -163,6 +178,7 @@ export const CreateGroupForm = () => {
                       <FormLabel>Group Name</FormLabel>
                       <FormControl>
                         <Input
+                          disabled={isPending}
                           placeholder="e.g. E-Commerce, Bootstrapping, etc."
                           className="appearance-none rounded-[3px] border-none bg-border text-base text-[#dde1e4]"
                           {...field}
@@ -182,6 +198,7 @@ export const CreateGroupForm = () => {
                     <FormLabel>Description</FormLabel>
                     <FormControl>
                       <Textarea
+                        disabled={isPending}
                         maxLength={280}
                         placeholder="What's this group about?"
                         className="h-40 w-full resize-none appearance-none rounded-[3px] border-none bg-border text-base text-[#dde1e4]"
@@ -195,33 +212,44 @@ export const CreateGroupForm = () => {
             </div>
 
             <div className="flex items-center space-x-2">
-              <Btn type="submit">SUBMIT GROUP</Btn>
+              <Btn disabled={isPending} type="submit" className="relative">
+                <Loader2
+                  className={cn(
+                    'hidden',
+                    isPending && 'absolute block animate-spin',
+                  )}
+                />
+                <span className={cn('visible', isPending && 'invisible')}>
+                  SUBMIT GROUP
+                </span>
+              </Btn>
 
               {/* 
                 isDirty not triggered when file uploaded, so
                 we have to check if imageFile state has name and size.
                 If so, that means it's not the `dummy` default file value
               */}
-              {((imageFile?.name && imageFile?.size) || isDirty) && (
-                <Button
-                  type="button"
-                  variant="link"
-                  onClick={() => {
-                    form.reset(defaultValues);
+              {!isPending &&
+                ((imageFile?.name && imageFile?.size) || isDirty) && (
+                  <Button
+                    type="button"
+                    variant="link"
+                    onClick={() => {
+                      form.reset(defaultValues);
 
-                    // Need to manually clear out file input.
-                    // Reset won't clear it. As a result, re-uploading same file that was cancelled prior,
-                    // won't trigger useEffect (bc same file is still set as the value even though preview changed)
-                    const fileInput = document.getElementById(
-                      'image-input',
-                    ) as HTMLInputElement;
-                    fileInput.value = '';
-                  }}
-                  className="text-foreground"
-                >
-                  Cancel
-                </Button>
-              )}
+                      // Need to manually clear out file input.
+                      // Reset won't clear it. As a result, re-uploading same file that was cancelled prior,
+                      // won't trigger useEffect (bc same file is still set as the value even though preview changed)
+                      const fileInput = document.getElementById(
+                        'image-input',
+                      ) as HTMLInputElement;
+                      fileInput.value = '';
+                    }}
+                    className="text-foreground"
+                  >
+                    Cancel
+                  </Button>
+                )}
             </div>
           </form>
         </Form>
