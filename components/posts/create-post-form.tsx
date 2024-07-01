@@ -13,12 +13,12 @@ import { Btn } from '@/components/btn';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import TextEditor from '@/components/editor/text-editor';
 import { Button } from '../ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '../ui/dropdown-menu';
 import { ChevronDown } from 'lucide-react';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 
 export type FormFields = z.infer<typeof CreatePostFormSchema>;
 
@@ -70,8 +70,8 @@ export const CreatePostForm = () => {
           />
 
           {/* Select Group */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+          <Popover>
+            <PopoverTrigger asChild>
               <Button
                 type="button"
                 className="flex items-center gap-3 rounded-sm bg-border text-base font-normal text-foreground hover:bg-[#3b5772] hover:text-white"
@@ -79,12 +79,15 @@ export const CreatePostForm = () => {
                 <span>Select Group</span>
                 <ChevronDown className="h-4 w-4" strokeWidth={3} />
               </Button>
-            </DropdownMenuTrigger>
+            </PopoverTrigger>
 
-            <DropdownMenuContent align="start">
+            <PopoverContent
+              align="start"
+              className="border-bg h-40 w-80 rounded-sm border-[3px] bg-border p-3 text-foreground shadow-xl"
+            >
               add group list here
-            </DropdownMenuContent>
-          </DropdownMenu>
+            </PopoverContent>
+          </Popover>
 
           <TextEditor onChange={onEditorChange} />
         </div>
