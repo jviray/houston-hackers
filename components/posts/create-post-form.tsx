@@ -12,6 +12,13 @@ import { AutosizeTextarea } from '@/components/ui/autosize-textarea';
 import { Btn } from '@/components/btn';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import TextEditor from '@/components/editor/text-editor';
+import { Button } from '../ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
+import { ChevronDown } from 'lucide-react';
 
 export type FormFields = z.infer<typeof CreatePostFormSchema>;
 
@@ -61,6 +68,23 @@ export const CreatePostForm = () => {
               </FormItem>
             )}
           />
+
+          {/* Select Group */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                className="flex items-center gap-3 rounded-sm bg-border text-base font-normal text-foreground hover:bg-[#3b5772] hover:text-white"
+              >
+                <span>Select Group</span>
+                <ChevronDown className="h-4 w-4" strokeWidth={3} />
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent align="start">
+              add group list here
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <TextEditor onChange={onEditorChange} />
         </div>
