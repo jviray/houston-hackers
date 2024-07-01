@@ -6,18 +6,18 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
-import { NewPostFormSchema } from '@/lib/schemas';
+import { CreatePostFormSchema } from '@/lib/schemas';
 
 import { AutosizeTextarea } from '@/components/ui/autosize-textarea';
 import { Btn } from '@/components/btn';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import TextEditor from '@/components/editor/text-editor';
 
-export type FormFields = z.infer<typeof NewPostFormSchema>;
+export type FormFields = z.infer<typeof CreatePostFormSchema>;
 
-export const NewPostForm = () => {
+export const CreatePostForm = () => {
   const form = useForm<FormFields>({
-    resolver: zodResolver(NewPostFormSchema),
+    resolver: zodResolver(CreatePostFormSchema),
     defaultValues: {
       title: '',
     },

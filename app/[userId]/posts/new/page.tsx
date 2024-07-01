@@ -1,9 +1,9 @@
-import { NewPostForm } from '@/components/posts/new-post-form';
+import { CreatePostForm } from '@/components/posts/create-post-form';
 
 export default function NewPostPage() {
   return (
     <div className="w-8/12">
-      <NewPostForm />
+      <CreatePostForm />
     </div>
   );
 }

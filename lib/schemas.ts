@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const NewPostFormSchema = z.object({
+export const CreatePostFormSchema = z.object({
   title: z
     .string({ required_error: 'Title is required.' })
     .min(6, 'Title must be at least 6 characters.')
