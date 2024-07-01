@@ -1,3 +1,3 @@
 export { fetchUserById, fetchUserByUsername, fetchUserByEmail } from './users';
 
-export { fetchAllGroups } from './groups';
+export { fetchAllGroups, fetchGroupByName } from './groups';
