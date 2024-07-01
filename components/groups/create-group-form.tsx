@@ -29,15 +29,15 @@ import {
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { FormFeedback } from '@/components/forms/form-feedback';
 
 type FormFields = z.infer<typeof CreateGroupFormSchema>;
 
-/**
- * TODO:
- * - Allow removing photo
- */
-
 export const CreateGroupForm = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const [successFeedback, setSuccessFeedback] = useState<string | undefined>();
+
   const form = useForm<FormFields>({
     resolver: zodResolver(CreateGroupFormSchema),
     defaultValues: {
@@ -47,12 +47,27 @@ export const CreateGroupForm = () => {
     },
   });
 
-  const { defaultValues, isDirty } = form.formState;
+  const {
+    formState: { defaultValues, isDirty, errors, submitCount, isSubmitted },
+    control,
+    handleSubmit,
+    reset,
+    setError,
+    clearErrors,
+  } = form;
+
+  // Clear success feedback when closing modal
+  useEffect(() => {
+    if (!modalOpen) {
+      setSuccessFeedback('');
+    }
+  }, [modalOpen]);
 
   const [fileUrl, setFileUrl] = useState<string | undefined>();
 
-  const imageFile = useWatch({ control: form.control, name: 'imageFile' });
+  const imageFile = useWatch({ control, name: 'imageFile' });
 
+  // Sets file url for preview
   useEffect(() => {
     if (imageFile?.name && imageFile.size) {
       if (fileUrl) {
@@ -67,6 +82,13 @@ export const CreateGroupForm = () => {
   }, [imageFile]);
 
   const [isPending, startTransition] = useTransition();
+
+  // Clear out success feedback before executing form.handleSubmit
+  useEffect(() => {
+    if (isSubmitted) {
+      setSuccessFeedback('');
+    }
+  }, [submitCount, isSubmitted]);
 
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
     startTransition(async () => {
@@ -90,12 +112,15 @@ export const CreateGroupForm = () => {
         });
 
         if (res.success) {
-          form.reset();
+          setSuccessFeedback(res.success);
+          reset();
         } else if (res.error) {
           throw new Error(res.error);
         }
       } catch (error) {
         if (error instanceof Error) {
+          // setErrorFeedback(error.message);
+          setError('root', { message: error.message });
           console.error(error);
         }
       }
@@ -103,7 +128,7 @@ export const CreateGroupForm = () => {
   };
 
   return (
-    <Dialog>
+    <Dialog open={modalOpen} onOpenChange={setModalOpen}>
       <DialogTrigger asChild>
         <Btn className="w-full font-semibold">CREATE GROUP</Btn>
       </DialogTrigger>
@@ -115,21 +140,20 @@ export const CreateGroupForm = () => {
 
         {/* Form */}
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="mt-3 space-y-8"
-          >
+          <form onSubmit={handleSubmit(onSubmit)} className="mt-3 space-y-8">
             <div className="space-y-6">
               <div className="flex space-x-6">
                 <FormField
-                  control={form.control}
+                  control={control}
                   name="imageFile"
                   render={({ field }) => (
                     <FormItem>
                       <Avatar
-                        onClick={() =>
-                          document.getElementById('image-input')!.click()
-                        }
+                        onClick={() => {
+                          if (errors.root) clearErrors('root');
+                          if (successFeedback) setSuccessFeedback('');
+                          document.getElementById('image-input')!.click();
+                        }}
                         className={cn(
                           'group relative grid h-24 w-24 cursor-pointer place-items-center border-[6px] text-center text-xs',
                           isPending && 'cursor-not-allowed',
@@ -175,7 +199,7 @@ export const CreateGroupForm = () => {
                 />
 
                 <FormField
-                  control={form.control}
+                  control={control}
                   name="name"
                   render={({ field }) => (
                     <FormItem className="w-full">
@@ -185,6 +209,10 @@ export const CreateGroupForm = () => {
                           disabled={isPending}
                           placeholder="e.g. E-Commerce, Bootstrapping, etc."
                           className="appearance-none rounded-[3px] border-none bg-border text-base text-[#dde1e4]"
+                          onFocus={() => {
+                            if (errors.root) clearErrors('root');
+                            if (successFeedback) setSuccessFeedback('');
+                          }}
                           {...field}
                         />
                       </FormControl>
@@ -195,7 +223,7 @@ export const CreateGroupForm = () => {
               </div>
 
               <FormField
-                control={form.control}
+                control={control}
                 name="description"
                 render={({ field }) => (
                   <FormItem>
@@ -206,6 +234,10 @@ export const CreateGroupForm = () => {
                         maxLength={280}
                         placeholder="What's this group about?"
                         className="h-40 w-full resize-none appearance-none rounded-[3px] border-none bg-border text-base text-[#dde1e4]"
+                        onFocus={() => {
+                          if (errors.root) clearErrors('root');
+                          if (successFeedback) setSuccessFeedback('');
+                        }}
                         {...field}
                       />
                     </FormControl>
@@ -215,45 +247,52 @@ export const CreateGroupForm = () => {
               />
             </div>
 
-            <div className="flex items-center space-x-2">
-              <Btn disabled={isPending} type="submit" className="relative">
-                <Loader2
-                  className={cn(
-                    'hidden',
-                    isPending && 'absolute block animate-spin',
-                  )}
-                />
-                <span className={cn('visible', isPending && 'invisible')}>
-                  SUBMIT GROUP
-                </span>
-              </Btn>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Btn disabled={isPending} type="submit" className="relative">
+                  <Loader2
+                    className={cn(
+                      'hidden',
+                      isPending && 'absolute block animate-spin',
+                    )}
+                  />
+                  <span className={cn('visible', isPending && 'invisible')}>
+                    SUBMIT GROUP
+                  </span>
+                </Btn>
 
-              {/* 
+                {/* 
                 isDirty not triggered when file uploaded, so
                 we have to check if imageFile state has name and size.
                 If so, that means it's not the `dummy` default file value
               */}
-              {!isPending &&
-                ((imageFile?.name && imageFile?.size) || isDirty) && (
-                  <Button
-                    type="button"
-                    variant="link"
-                    onClick={() => {
-                      form.reset(defaultValues);
+                {!successFeedback &&
+                  !errors.root &&
+                  !isPending &&
+                  ((imageFile?.name && imageFile?.size) || isDirty) && (
+                    <Button
+                      type="button"
+                      variant="link"
+                      onClick={() => {
+                        reset(defaultValues);
 
-                      // Need to manually clear out file input.
-                      // Reset won't clear it. As a result, re-uploading same file that was cancelled prior,
-                      // won't trigger useEffect (bc same file is still set as the value even though preview changed)
-                      const fileInput = document.getElementById(
-                        'image-input',
-                      ) as HTMLInputElement;
-                      fileInput.value = '';
-                    }}
-                    className="text-foreground"
-                  >
-                    Cancel
-                  </Button>
-                )}
+                        // Need to manually clear out file input.
+                        // Reset won't clear it. As a result, re-uploading same file that was cancelled prior,
+                        // won't trigger useEffect (bc same file is still set as the value even though preview changed)
+                        const fileInput = document.getElementById(
+                          'image-input',
+                        ) as HTMLInputElement;
+                        fileInput.value = '';
+                      }}
+                      className="text-foreground"
+                    >
+                      Cancel
+                    </Button>
+                  )}
+              </div>
+
+              <FormFeedback status="error" message={errors.root?.message} />
+              <FormFeedback status="success" message={successFeedback} />
             </div>
           </form>
         </Form>
