@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { ImageUp, Loader2 } from 'lucide-react';
 
 import { CreateGroupFormSchema } from '@/lib/schemas';
-import { cn, delay } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { submitNewGroup, uploadImage } from '@/server/actions';
 
 import {

@@ -1,4 +1,4 @@
-import { Group, Post, User } from '@prisma/client';
+import { Group, User } from '@prisma/client';
 import Link from 'next/link';
 import { default as BoringAvatar } from 'boring-avatars';
 

@@ -6,7 +6,7 @@ import { fetchAllGroups } from '@/server/queries';
 import { Card } from '@/components/ui/card';
 import { LoginRequired } from '@/components/access/login-required';
 import { CreateGroupForm } from '@/components/groups/create-group-form';
-import { GroupAvatar } from '@/components/user/avatar';
+import { GroupAvatar } from '@/components/avatar';
 
 export const GroupAside = async () => {
   const groups = await fetchAllGroups();

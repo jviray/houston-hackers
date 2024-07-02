@@ -11,9 +11,9 @@ export const CreatePostFormSchema = z.object({
     .transform((title) => {
       return title.toLowerCase().trim();
     }),
-  // group: z.string().refine((groupId) => !!groupId, {
-  //   message: 'Must select a group',
-  // }),
+  group: z.string().refine((groupId) => !!groupId, {
+    message: 'Must select a group',
+  }),
 });
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { getCurrentUser } from '@/lib/utils';
 
 import { LoginRequired } from '@/components/access/login-required';
-import { UserAvatar } from '@/components/user/avatar';
+import { UserAvatar } from '@/components/avatar';
 import { AuthButtonGroup } from '@/components/layout/auth-btn-group';
 
 export const Navbar = async () => {

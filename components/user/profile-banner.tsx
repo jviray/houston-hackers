@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
 import { Btn } from '@/components/btn';
-import { UserAvatar } from '@/components/user/avatar';
+import { UserAvatar } from '@/components/avatar';
 import { PermissionRequired } from '@/components/access/permission-required';
 
 const TABS = ['Comments', 'Posts'];
