@@ -25,8 +25,8 @@ import { GroupAvatar } from '@/components/avatar';
 type SearchSelectProps<T> = {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  selectedValue: string;
-  setSelectedValue: Dispatch<SetStateAction<string>>;
+  value: string;
+  setValue: Dispatch<SetStateAction<string>>;
   data: T[];
 };
 
@@ -36,13 +36,7 @@ const Avatars = {
 
 export const SearchSelect = <T extends Group>(type: 'group') =>
   Object.assign(
-    ({
-      open,
-      setOpen,
-      selectedValue,
-      setSelectedValue,
-      data,
-    }: SearchSelectProps<T>) => {
+    ({ open, setOpen, value, setValue, data }: SearchSelectProps<T>) => {
       return (
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
@@ -51,9 +45,7 @@ export const SearchSelect = <T extends Group>(type: 'group') =>
               aria-expanded={open}
               className="flex items-center gap-3 rounded-sm bg-border text-base font-normal text-foreground hover:bg-[#3b5772] hover:text-white"
             >
-              {selectedValue
-                ? capitalize(selectedValue)
-                : `Select ${capitalize(type)}`}
+              {value ? capitalize(value) : `Select ${capitalize(type)}`}
               <ChevronDown className="h-4 w-4" strokeWidth={3} />
             </Button>
           </PopoverTrigger>
@@ -77,9 +69,7 @@ export const SearchSelect = <T extends Group>(type: 'group') =>
                       key={dataItem.id}
                       value={dataItem.name}
                       onSelect={(targetValue) => {
-                        setSelectedValue(
-                          targetValue === selectedValue ? '' : targetValue,
-                        );
+                        setValue(targetValue === value ? '' : targetValue);
                         setOpen(false);
                       }}
                       className="flex cursor-pointer items-center gap-3 rounded-none px-4 py-2 data-[selected=true]:bg-[#3b5772] data-[selected=true]:text-white"

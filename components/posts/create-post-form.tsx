@@ -11,7 +11,13 @@ import { CreatePostFormSchema } from '@/lib/schemas';
 
 import { AutosizeTextarea } from '@/components/ui/autosize-textarea';
 import { Btn } from '@/components/btn';
-import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from '@/components/ui/form';
 import TextEditor from '@/components/editor/text-editor';
 import { GroupSelect } from '@/components/search-select';
 
@@ -23,7 +29,6 @@ type CreatePostFormProps = {
 
 export const CreatePostForm = ({ groups }: CreatePostFormProps) => {
   const [isSelectOpen, setIsSelectOpen] = useState(false);
-  const [selectedGroup, setSelectedGroup] = useState('');
 
   const form = useForm<FormFields>({
     resolver: zodResolver(CreatePostFormSchema),
@@ -72,12 +77,25 @@ export const CreatePostForm = ({ groups }: CreatePostFormProps) => {
             )}
           />
 
-          <GroupSelect
-            open={isSelectOpen}
-            setOpen={setIsSelectOpen}
-            selectedValue={selectedGroup}
-            setSelectedValue={setSelectedGroup}
-            data={groups}
+          <FormField
+            control={form.control}
+            name="group"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <GroupSelect
+                    open={isSelectOpen}
+                    setOpen={setIsSelectOpen}
+                    value={field.value}
+                    setValue={(value) => {
+                      field.onChange(value);
+                    }}
+                    data={groups}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
 
           <TextEditor onChange={onEditorChange} />
