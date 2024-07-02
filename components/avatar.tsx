@@ -8,6 +8,7 @@ import {
   AvatarImage,
 } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useState } from 'react';
 
 type AvatarAccount = Pick<Group, 'id' | 'image'> & {
   name: string | null;

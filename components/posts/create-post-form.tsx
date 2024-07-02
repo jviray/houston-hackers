@@ -13,7 +13,7 @@ import { AutosizeTextarea } from '@/components/ui/autosize-textarea';
 import { Btn } from '@/components/btn';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import TextEditor from '@/components/editor/text-editor';
-import { SearchSelect } from '@/components/search-select';
+import { GroupSelect } from '@/components/search-select';
 
 export type FormFields = z.infer<typeof CreatePostFormSchema>;
 
@@ -22,6 +22,9 @@ type CreatePostFormProps = {
 };
 
 export const CreatePostForm = ({ groups }: CreatePostFormProps) => {
+  const [isSelectOpen, setIsSelectOpen] = useState(false);
+  const [selectedGroup, setSelectedGroup] = useState('');
+
   const form = useForm<FormFields>({
     resolver: zodResolver(CreatePostFormSchema),
     defaultValues: {
@@ -69,7 +72,13 @@ export const CreatePostForm = ({ groups }: CreatePostFormProps) => {
             )}
           />
 
-          <SearchSelect groups={groups} />
+          <GroupSelect
+            open={isSelectOpen}
+            setOpen={setIsSelectOpen}
+            selectedValue={selectedGroup}
+            setSelectedValue={setSelectedGroup}
+            data={groups}
+          />
 
           <TextEditor onChange={onEditorChange} />
         </div>
