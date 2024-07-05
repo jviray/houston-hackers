@@ -35,22 +35,14 @@ export const CreatePostForm = ({ groups }: CreatePostFormProps) => {
     defaultValues: {
       title: '',
       group: '',
+      content: '',
     },
   });
 
   // https://lexical.dev/docs/getting-started/react#saving-lexical-state
   // https://www.chunxuyang.com/blogs/shadcn-lexical-editor/
   // https://stackoverflow.com/questions/75292778/how-do-i-parse-the-html-from-the-lexical-editorstate-without-an-extra-lexical-ed
-
-  const [body, setBody] = useState<string | undefined>();
-
-  const onEditorChange = (editorState: EditorState) => {
-    // Call toJSON on the EditorState object, which produces a serialization safe string
-    const editorStateJSON = editorState.toJSON();
-
-    // However, we still have a JavaScript object, so we need to convert it to an actual string with JSON.stringify
-    setBody(JSON.stringify(editorStateJSON));
-  };
+  // https://github.com/colinhacks/zod/discussions/2215
 
   const onSubmit = (fields: FormFields) => {
     console.log(fields);
@@ -73,6 +65,7 @@ export const CreatePostForm = ({ groups }: CreatePostFormProps) => {
                     {...field}
                   />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -98,7 +91,26 @@ export const CreatePostForm = ({ groups }: CreatePostFormProps) => {
             )}
           />
 
-          <TextEditor onChange={onEditorChange} />
+          <FormField
+            control={form.control}
+            name="content"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <TextEditor
+                    onChange={(editorState: EditorState) => {
+                      // Call toJSON on EditorState to get JS object
+                      const editorStateJSON = editorState.toJSON();
+
+                      // Convert it to an actual string with JSON.stringify
+                      field.onChange(JSON.stringify(editorStateJSON));
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
 
         <Btn type="submit" className="px-4 py-6">
