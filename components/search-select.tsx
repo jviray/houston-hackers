@@ -45,7 +45,9 @@ export const SearchSelect = <T extends Group>(type: 'group') =>
               aria-expanded={open}
               className="flex items-center gap-3 rounded-sm bg-border text-base font-normal text-foreground hover:bg-[#3b5772] hover:text-white"
             >
-              {value ? capitalize(value) : `Select ${capitalize(type)}`}
+              {value
+                ? capitalize(data.find((group) => group.id === value)!.name)
+                : `Select ${capitalize(type)}`}
               <ChevronDown className="h-4 w-4" strokeWidth={3} />
             </Button>
           </PopoverTrigger>
@@ -67,7 +69,7 @@ export const SearchSelect = <T extends Group>(type: 'group') =>
                   {data.map((dataItem: T) => (
                     <CommandItem
                       key={dataItem.id}
-                      value={dataItem.name}
+                      value={dataItem.id}
                       onSelect={(targetValue) => {
                         setValue(targetValue === value ? '' : targetValue);
                         setOpen(false);

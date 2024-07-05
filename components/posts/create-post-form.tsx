@@ -1,13 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { type EditorState } from 'lexical';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { Group } from '@prisma/client';
 
 import { CreatePostFormSchema } from '@/lib/schemas';
+import { submitNewPost } from '@/server/actions';
 
 import { AutosizeTextarea } from '@/components/ui/autosize-textarea';
 import { Btn } from '@/components/btn';
@@ -20,6 +21,11 @@ import {
 } from '@/components/ui/form';
 import TextEditor from '@/components/editor/text-editor';
 import { GroupSelect } from '@/components/search-select';
+
+// https://lexical.dev/docs/getting-started/react#saving-lexical-state
+// https://www.chunxuyang.com/blogs/shadcn-lexical-editor/
+// https://stackoverflow.com/questions/75292778/how-do-i-parse-the-html-from-the-lexical-editorstate-without-an-extra-lexical-ed
+// https://github.com/colinhacks/zod/discussions/2215
 
 export type FormFields = z.infer<typeof CreatePostFormSchema>;
 
@@ -39,13 +45,13 @@ export const CreatePostForm = ({ groups }: CreatePostFormProps) => {
     },
   });
 
-  // https://lexical.dev/docs/getting-started/react#saving-lexical-state
-  // https://www.chunxuyang.com/blogs/shadcn-lexical-editor/
-  // https://stackoverflow.com/questions/75292778/how-do-i-parse-the-html-from-the-lexical-editorstate-without-an-extra-lexical-ed
-  // https://github.com/colinhacks/zod/discussions/2215
+  const [isPending, startTransition] = useTransition();
 
-  const onSubmit = (fields: FormFields) => {
-    console.log(fields);
+  const onSubmit: SubmitHandler<FormFields> = async (data) => {
+    startTransition(async () => {
+      const res = await submitNewPost(data);
+      console.log(res);
+    });
   };
 
   return (

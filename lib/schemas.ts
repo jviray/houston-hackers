@@ -11,29 +11,33 @@ export const CreatePostFormSchema = z.object({
     .transform((title) => {
       return title.toLowerCase().trim();
     }),
-  group: z.string().refine((groupId) => !!groupId, {
-    message: 'Must select a group',
-  }),
-  content: z.string().superRefine((content, ctx) => {
-    let contentChildren;
-    try {
-      const parsedContent = JSON.parse(content);
-      contentChildren = parsedContent.root.children[0].children;
-    } catch (error) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Invalid JSON' });
-      return z.NEVER;
-    }
+  group: z
+    .string({ required_error: 'Group is required.' })
+    .refine((groupId) => !!groupId, {
+      message: 'Must select a group',
+    }),
+  content: z
+    .string({ required_error: 'Content is required.' })
+    .superRefine((content, ctx) => {
+      let contentChildren;
+      try {
+        const parsedContent = JSON.parse(content);
+        contentChildren = parsedContent.root.children[0].children;
+      } catch (error) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Invalid JSON' });
+        return z.NEVER;
+      }
 
-    if (contentChildren.length === 0) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Must enter something.',
-        fatal: true,
-      });
+      if (contentChildren.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Must enter something.',
+          fatal: true,
+        });
 
-      return z.NEVER;
-    }
-  }),
+        return z.NEVER;
+      }
+    }),
 });
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];

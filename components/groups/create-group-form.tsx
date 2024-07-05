@@ -119,7 +119,6 @@ export const CreateGroupForm = () => {
         }
       } catch (error) {
         if (error instanceof Error) {
-          // setErrorFeedback(error.message);
           setError('root', { message: error.message });
           console.error(error);
         }
